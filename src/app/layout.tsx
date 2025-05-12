@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto_Slab, Open_Sans } from 'next/font/google';
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 
 const robotoSlab = Roboto_Slab({
@@ -31,6 +32,7 @@ export default function RootLayout({
         className={`${robotoSlab.variable} ${openSans.variable} antialiased bg-background`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );
