@@ -1,35 +1,39 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { zodResolver } from "@hookform/resolvers/zod"
+import Image from 'next/image'
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { z } from "zod"
+import griffon from '../../../../public/grifon-blue.svg'
 
 
 const FormSchema = z.object({
   username: z.string().min(6, {
     message: "Username must be at least 6 characters.",
   }),
-  password: z.string()
+  password: z.string().min(1, {
+    message: "Password is required."
+  })
 })
 
 export default function Page() {
@@ -53,7 +57,13 @@ export default function Page() {
 
   return (
     
-    <div className="h-screen flex items-center justify-center">
+    <div className="h-screen flex flex-row-reverse gap-12 items-center justify-center">
+      <Image
+        className="hidden lg:block dark:fill-red-500"
+        src={griffon}
+        alt='AUBG Griffon'
+        priority
+      />
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Sign in</CardTitle>
@@ -85,7 +95,7 @@ export default function Page() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input placeholder="•••••••••••" {...field} />
+                      <Input type="password" placeholder="•••••••••••" {...field} />
                     </FormControl>
                     <FormDescription>
                       This is your AUBG password
