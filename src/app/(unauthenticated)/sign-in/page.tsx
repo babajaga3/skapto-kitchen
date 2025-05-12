@@ -71,7 +71,7 @@ export default function Page() {
         </CardHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <CardContent>
+        <CardContent className="space-y-4">
               <FormField
                 control={form.control}
                 name="username"
