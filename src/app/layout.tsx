@@ -1,30 +1,30 @@
-import type { Metadata } from "next";
-import { Roboto_Slab, Open_Sans } from 'next/font/google';
-import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
+import type { Metadata } from 'next'
+import { Roboto_Slab, Open_Sans } from 'next/font/google'
+import './globals.css'
+import { Toaster } from '@/components/ui/sonner'
 
 
 const robotoSlab = Roboto_Slab({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-heading',
-});
+  subsets: [ 'latin' ],
+  weight: [ '400', '700' ],
+  variable: '--font-heading'
+})
 
 const openSans = Open_Sans({
-  subsets: ['latin'],
-  weight: ['400', '600'],
-  variable: '--font-body',
-});
+  subsets: [ 'latin' ],
+  weight: [ '400', '600' ],
+  variable: '--font-body'
+})
 
 export const metadata: Metadata = {
-  title: "Skapto Kitchens",
-  description: "Book any skapto kitchen online!",
-};
+  title: 'Skapto Kitchens',
+  description: 'Book any skapto kitchen online!'
+}
 
 export default function RootLayout({
-  children,
+  children
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en" className="light">
@@ -35,5 +35,5 @@ export default function RootLayout({
         <Toaster />
       </body>
     </html>
-  );
+  )
 }
