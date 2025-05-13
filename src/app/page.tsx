@@ -41,7 +41,7 @@ export default function Home() {
       <div className="flex flex-col items-center gap-2">
         <h3 className="scroll-m-20 text-xl font-semibold tracking-tight">Select your Skapto</h3>
         <p className="text-sm text-muted-foreground mx-12 sm:mx-0">
-          Choose the Skapto where you will be cooking the most. Do not worry, you can change this later!
+          Choose the Skapto where you will be cooking the most. Don't worry, you can change this later!
         </p>
       </div>
       <Form {...form}>

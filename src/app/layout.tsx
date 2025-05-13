@@ -1,7 +1,7 @@
-import type { Metadata } from 'next'
-import { Roboto_Slab, Open_Sans } from 'next/font/google'
-import './globals.css'
 import { Toaster } from '@/components/ui/sonner'
+import type { Metadata } from 'next'
+import { Open_Sans, Roboto_Slab } from 'next/font/google'
+import './globals.css'
 
 
 const robotoSlab = Roboto_Slab({
