@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { ReactNode, useState, useEffect, useRef } from "react";
-import { useModal } from "@/providers/modal-context";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { X } from "lucide-react";
+import { ReactNode, useState, useEffect, useRef } from 'react'
+import { useModal } from '@/providers/modal-context'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { X } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,19 +12,20 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import clsx from "clsx";
-import { AnimatePresence, motion } from "framer-motion";
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog'
+import clsx from 'clsx'
+import { AnimatePresence, motion } from 'framer-motion'
+
 
 interface CustomModalProps {
-  title?: string;
-  subheading?: string;
-  children: ReactNode;
-  defaultOpen?: boolean;
-  contentClass?: string;
-  id?: string;
-  customizedModal?: boolean;
+  title?: string
+  subheading?: string
+  children: ReactNode
+  defaultOpen?: boolean
+  contentClass?: string
+  id?: string
+  customizedModal?: boolean
 }
 
 export default function CustomModal({
@@ -33,36 +34,36 @@ export default function CustomModal({
   children,
   defaultOpen = false,
   contentClass,
-  id = "default",
-  customizedModal = false,
+  id = 'default',
+  customizedModal = false
 }: CustomModalProps) {
-  const { isOpen, setClose, setOpen, canClose, setCanClose } = useModal();
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [localOpen, setLocalOpen] = useState(defaultOpen);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const { isOpen, setClose, setOpen, canClose, setCanClose } = useModal()
+  const [ showConfirmation, setShowConfirmation ] = useState(false)
+  const [ localOpen, setLocalOpen ] = useState(defaultOpen)
+  const contentRef = useRef<HTMLDivElement>(null)
 
-  const contentClassName = clsx("overflow-auto rounded-md bg-card", contentClass);
+  const contentClassName = clsx('overflow-auto rounded-md bg-card', contentClass)
 
   // Narrow dependency: only react to isOpen for this specific modal.
   useEffect(() => {
-    setLocalOpen(isOpen[id] ?? defaultOpen);
-  }, [isOpen[id], id, defaultOpen]);
+    setLocalOpen(isOpen[id] ?? defaultOpen)
+  }, [ isOpen[id], id, defaultOpen ])
 
   // Auto-focus when modal opens.
   useEffect(() => {
     if (localOpen && contentRef.current) {
-      contentRef.current.focus();
+      contentRef.current.focus()
     }
-  }, [localOpen]);
+  }, [ localOpen ])
 
   function handleOpenChange(open: boolean) {
     // Check the specific modal's canClose flag.
     if (!open && canClose[id] === false) {
-      setShowConfirmation(true);
+      setShowConfirmation(true)
     } else {
-      setLocalOpen(open);
+      setLocalOpen(open)
       if (!open) {
-        setTimeout(() => setClose(id), 300);
+        setTimeout(() => setClose(id), 300)
       } else {
         // IMPORTANT: Ensure you pass a valid modal element when opening.
         setOpen(
@@ -71,39 +72,37 @@ export default function CustomModal({
           </CustomModal>,
           undefined,
           id
-        );
+        )
       }
     }
   }
 
   function handleKeyDown(event: React.KeyboardEvent) {
-    if (event.key === "Tab") {
-      const focusableElements = contentRef.current?.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      ) as NodeListOf<HTMLElement>;
+    if (event.key === 'Tab') {
+      const focusableElements = contentRef.current?.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])') as NodeListOf<HTMLElement>
       if (focusableElements && focusableElements.length > 0) {
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
+        const firstElement = focusableElements[0]
+        const lastElement = focusableElements.at(-1)
         if (event.shiftKey && document.activeElement === firstElement) {
-          event.preventDefault();
-          lastElement.focus();
+          event.preventDefault()
+          lastElement.focus()
         } else if (!event.shiftKey && document && document.activeElement === lastElement) {
-          event.preventDefault();
-          firstElement.focus();
+          event.preventDefault()
+          firstElement.focus()
         }
       }
-    } else if (event.key === "Escape") {
-      handleOpenChange(false);
+    } else if (event.key === 'Escape') {
+      handleOpenChange(false)
     }
   }
 
   // Updated handleConfirmClose to force-close the modal.
   function handleConfirmClose() {
-    setShowConfirmation(false);
+    setShowConfirmation(false)
     // Force the modal to be closable by updating canClose.
-    setCanClose(id, true);
-    setLocalOpen(false);
-    setTimeout(() => setClose(id), 300);
+    setCanClose(id, true)
+    setLocalOpen(false)
+    setTimeout(() => setClose(id), 300)
   }
 
   return (
@@ -136,8 +135,8 @@ export default function CustomModal({
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className={clsx("relative p-1 md:p-6 outline-none rounded-xl shadow-xl", contentClassName)}
-                onClick={(e) => e.stopPropagation()}
+                className={clsx('relative p-1 md:p-6 outline-none rounded-xl shadow-xl', contentClassName)}
+                onClick={e => e.stopPropagation()}
                 onKeyDown={handleKeyDown}
                 ref={contentRef}
                 tabIndex={-1}>
@@ -163,5 +162,5 @@ export default function CustomModal({
         </Dialog>
       )}
     </>
-  );
+  )
 }

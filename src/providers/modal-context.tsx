@@ -1,18 +1,19 @@
-"use client";
+'use client'
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from 'react'
+
 
 interface ModalContextType {
-  data: Record<string, any>;
-  isOpen: Record<string, boolean>;
-  canClose: Record<string, boolean>;
-  setCanClose: (modalId: string, canClose: boolean) => void;
+  data: Record<string, any>
+  isOpen: Record<string, boolean>
+  canClose: Record<string, boolean>
+  setCanClose: (modalId: string, canClose: boolean) => void
   setOpen: (
     modal: React.ReactNode,
     fetchdata?: () => Promise<any>,
     modalId?: string
-  ) => void;
-  setClose: (modalId?: string) => void;
+  ) => void
+  setClose: (modalId?: string) => void
 }
 
 export const ModalContext = createContext<ModalContextType>({
@@ -21,80 +22,82 @@ export const ModalContext = createContext<ModalContextType>({
   canClose: {},
   setOpen: () => {},
   setClose: () => {},
-  setCanClose: () => {},
-});
+  setCanClose: () => {}
+})
 
 interface ModalProviderProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
-  const [isOpen, setIsOpen] = useState<Record<string, boolean>>({});
-  const [data, setData] = useState<Record<string, any>>({});
-  const [modals, setModals] = useState<Record<string, React.ReactNode>>({});
-  const [canClose, setCanCloseState] = useState<Record<string, boolean>>({});
+  const [ isOpen, setIsOpen ] = useState<Record<string, boolean>>({})
+  const [ data, setData ] = useState<Record<string, any>>({})
+  const [ modals, setModals ] = useState<Record<string, React.ReactNode>>({})
+  const [ canClose, setCanCloseState ] = useState<Record<string, boolean>>({})
 
   const setOpen = async (
     modal: React.ReactNode,
     fetchdata?: () => Promise<any>,
-    modalId: string = "default"
+    modalId: string = 'default'
   ) => {
     if (fetchdata) {
-      const fetchedData = await fetchdata();
-      setData((prev) => ({ ...prev, [modalId]: fetchedData || null }));
+      const fetchedData = await fetchdata()
+      setData(prev => ({ ...prev, [modalId]: fetchedData || null }))
     }
-    setIsOpen((prev) => ({ ...prev, [modalId]: true }));
-    setModals((prev) => ({ ...prev, [modalId]: modal }));
-    // Only update canClose if needed.
-    setCanCloseState((prev) =>
-      prev[modalId] === true ? prev : { ...prev, [modalId]: true }
-    );
-  };
 
-  const setClose = (modalId: string = "default") => {
+    setIsOpen(prev => ({ ...prev, [modalId]: true }))
+    setModals(prev => ({ ...prev, [modalId]: modal }))
+    // Only update canClose if needed.
+    setCanCloseState(prev =>
+      prev[modalId] === true ? prev : { ...prev, [modalId]: true })
+  }
+
+  const setClose = (modalId: string = 'default') => {
     if (canClose[modalId] !== false) {
-      setIsOpen((prev) => ({ ...prev, [modalId]: false }));
-      setData((prev) => ({ ...prev, [modalId]: null }));
-      setModals((prev) => {
-        const newState = { ...prev };
-        delete newState[modalId];
-        return newState;
-      });
-      setCanCloseState((prev) => {
-        const newState = { ...prev };
-        delete newState[modalId];
-        return newState;
-      });
+      setIsOpen(prev => ({ ...prev, [modalId]: false }))
+      setData(prev => ({ ...prev, [modalId]: null }))
+      setModals(prev => {
+        const newState = { ...prev }
+        delete newState[modalId]
+
+        return newState
+      })
+      setCanCloseState(prev => {
+        const newState = { ...prev }
+        delete newState[modalId]
+
+        return newState
+      })
     }
-  };
+  }
 
   const setCanClose = (modalId: string, value: boolean) => {
-    setCanCloseState((prev) => {
+    setCanCloseState(prev => {
       // Only update if the value changes
-      if (prev[modalId] === value) return prev;
-      return { ...prev, [modalId]: value };
-    });
-  };
+      if (prev[modalId] === value) return prev
+
+      return { ...prev, [modalId]: value }
+    })
+  }
 
   return (
     <ModalContext.Provider
       value={{ data, isOpen, canClose, setOpen, setClose, setCanClose }}
     >
       {children}
-      {Object.entries(modals).map(
-        ([id, modal]) =>
-          isOpen[id] && <React.Fragment key={id}>{modal}</React.Fragment>
-      )}
+      {Object.entries(modals).map(([ id, modal ]) =>
+        isOpen[id] && <React.Fragment key={id}>{modal}</React.Fragment>)}
     </ModalContext.Provider>
-  );
-};
+  )
+}
 
-export default ModalProvider;
+export default ModalProvider
 
 export const useModal = () => {
-  const context = useContext(ModalContext);
+  const context = useContext(ModalContext)
   if (!context) {
-    throw new Error("useModal must be used within a ModalProvider");
+    throw new Error('useModal must be used within a ModalProvider')
   }
-  return context;
-};
+
+  return context
+}

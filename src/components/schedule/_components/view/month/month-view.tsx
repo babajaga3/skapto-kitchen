@@ -1,79 +1,82 @@
-"use client";
+'use client'
 
-import React, { useState, useCallback } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import clsx from "clsx";
+import React, { useState, useCallback } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
+import clsx from 'clsx'
 
-import { useScheduler } from "@/providers/schedular-provider";
-import { useModal } from "@/providers/modal-context";
-import AddEventModal from "@/components/schedule/_modals/add-event-modal";
-import ShowMoreEventsModal from "@/components/schedule/_modals/show-more-events-modal";
-import EventStyled from "../event-component/event-styled";
-import { Event, CustomEventModal } from "@/types";
-import CustomModal from "@/components/ui/custom-modal";
+import { useScheduler } from '@/providers/schedular-provider'
+import { useModal } from '@/providers/modal-context'
+import AddEventModal from '@/components/schedule/_modals/add-event-modal'
+import ShowMoreEventsModal from '@/components/schedule/_modals/show-more-events-modal'
+import EventStyled from '../event-component/event-styled'
+import { Event, CustomEventModal } from '@/types'
+import CustomModal from '@/components/ui/custom-modal'
+
 
 const pageTransitionVariants = {
   enter: (direction: number) => ({
-    opacity: 0,
+    opacity: 0
   }),
   center: {
-    opacity: 1,
+    opacity: 1
   },
   exit: (direction: number) => ({
     opacity: 0,
     transition: {
-      opacity: { duration: 0.2, ease: "easeInOut" },
-    },
-  }),
-};
+      opacity: { duration: 0.2, ease: 'easeInOut' }
+    }
+  })
+}
 
 export default function MonthView({
   prevButton,
   nextButton,
   CustomEventComponent,
   CustomEventModal,
-  classNames,
+  classNames
 }: {
-  prevButton?: React.ReactNode;
-  nextButton?: React.ReactNode;
-  CustomEventComponent?: React.FC<Event>;
-  CustomEventModal?: CustomEventModal;
-  classNames?: { prev?: string; next?: string; addEvent?: string };
+  prevButton?: React.ReactNode
+  nextButton?: React.ReactNode
+  CustomEventComponent?: React.FC<Event>
+  CustomEventModal?: CustomEventModal
+  classNames?: { prev?: string; next?: string; addEvent?: string }
 }) {
-  const { getters, weekStartsOn } = useScheduler();
-  const { setOpen } = useModal();
+  const { getters, weekStartsOn } = useScheduler()
+  const { setOpen } = useModal()
 
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [direction, setDirection] = useState<number>(0);
+  const [ currentDate, setCurrentDate ] = useState(new Date())
+  const [ direction, setDirection ] = useState<number>(0)
 
   const daysInMonth = getters.getDaysInMonth(
     currentDate.getMonth(),
     currentDate.getFullYear()
-  );
+  )
 
   const handlePrevMonth = useCallback(() => {
-    setDirection(-1);
+    setDirection(-1)
+
     const newDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() - 1,
       1
-    );
-    setCurrentDate(newDate);
-  }, [currentDate]);
+    )
+    setCurrentDate(newDate)
+  }, [ currentDate ])
 
   const handleNextMonth = useCallback(() => {
-    setDirection(1);
+    setDirection(1)
+
     const newDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + 1,
       1
-    );
-    setCurrentDate(newDate);
-  }, [currentDate]);
+    )
+    setCurrentDate(newDate)
+  }, [ currentDate ])
 
   function handleAddEvent(selectedDay: number) {
     // Create start date at 12:00 AM on the selected day
@@ -84,7 +87,7 @@ export default function MonthView({
       0,
       0,
       0
-    );
+    )
 
     // Create end date at 11:59 PM on the same day
     const endDate = new Date(
@@ -94,7 +97,7 @@ export default function MonthView({
       23,
       59,
       59
-    );
+    )
 
     setOpen(
       <CustomModal title="Add Event">
@@ -108,12 +111,12 @@ export default function MonthView({
         return {
           startDate,
           endDate,
-          title: "",
-          id: "",
-          variant: "primary",
-        };
+          title: '',
+          id: '',
+          variant: 'primary'
+        }
       }
-    );
+    )
   }
 
   function handleShowMoreEvents(dayEvents: Event[]) {
@@ -123,10 +126,10 @@ export default function MonthView({
       </CustomModal>,
       async () => {
         return {
-          dayEvents,
-        };
+          dayEvents
+        }
       }
-    );
+    )
   }
 
   const containerVariants = {
@@ -134,43 +137,44 @@ export default function MonthView({
     center: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.02,
-      },
+        staggerChildren: 0.02
+      }
     },
-    exit: { opacity: 0 },
-  };
+    exit: { opacity: 0 }
+  }
 
   const itemVariants = {
     enter: { opacity: 0, y: 20 },
     center: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-    exit: { opacity: 0, y: -20, transition: { duration: 0.2 } },
-  };
+    exit: { opacity: 0, y: -20, transition: { duration: 0.2 } }
+  }
 
-  const daysOfWeek =
-    weekStartsOn === "monday"
-      ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-      : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const daysOfWeek
+    = weekStartsOn === 'monday'
+      ? [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ]
+      : [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ]
 
   const firstDayOfMonth = new Date(
     currentDate.getFullYear(),
     currentDate.getMonth(),
     1
-  );
+  )
 
-  const startOffset =
-    (firstDayOfMonth.getDay() - (weekStartsOn === "monday" ? 1 : 0) + 7) % 7;
+  const startOffset
+    = (firstDayOfMonth.getDay() - (weekStartsOn === 'monday' ? 1 : 0) + 7) % 7
 
   // Calculate previous month's last days for placeholders
   const prevMonth = new Date(
     currentDate.getFullYear(),
     currentDate.getMonth() - 1,
     1
-  );
+  )
   const lastDateOfPrevMonth = new Date(
     prevMonth.getFullYear(),
     prevMonth.getMonth() + 1,
     0
-  ).getDate();
+  ).getDate()
+
   return (
     <div>
       <div className="flex flex-col mb-4">
@@ -182,7 +186,7 @@ export default function MonthView({
           transition={{ duration: 0.5 }}
           className="text-3xl my-5 tracking-tighter font-bold"
         >
-          {currentDate.toLocaleString("default", { month: "long" })}{" "}
+          {currentDate.toLocaleString('default', { month: 'long' })}{' '}
           {currentDate.getFullYear()}
         </motion.h2>
         <div className="flex gap-3">
@@ -222,9 +226,9 @@ export default function MonthView({
               ...pageTransitionVariants.center,
               transition: {
                 opacity: { duration: 0.2 },
-                staggerChildren: 0.02,
-              },
-            },
+                staggerChildren: 0.02
+              }
+            }
           }}
           initial="enter"
           animate="center"
@@ -242,14 +246,14 @@ export default function MonthView({
 
           {Array.from({ length: startOffset }).map((_, idx) => (
             <div key={`offset-${idx}`} className="h-[150px] opacity-50">
-              <div className={clsx("font-semibold relative text-3xl mb-1")}>
+              <div className={clsx('font-semibold relative text-3xl mb-1')}>
                 {lastDateOfPrevMonth - startOffset + idx + 1}
               </div>
             </div>
           ))}
 
-          {daysInMonth.map((dayObj) => {
-            const dayEvents = getters.getEventsForDay(dayObj.day, currentDate);
+          {daysInMonth.map(dayObj => {
+            const dayEvents = getters.getEventsForDay(dayObj.day, currentDate)
 
             return (
               <motion.div
@@ -266,15 +270,15 @@ export default function MonthView({
                 >
                   <div
                     className={clsx(
-                      "font-semibold relative text-3xl mb-1",
+                      'font-semibold relative text-3xl mb-1',
                       dayEvents.length > 0
-                        ? "text-primary-600"
-                        : "text-muted-foreground",
-                      new Date().getDate() === dayObj.day &&
-                        new Date().getMonth() === currentDate.getMonth() &&
-                        new Date().getFullYear() === currentDate.getFullYear()
-                        ? "text-secondary-500"
-                        : ""
+                        ? 'text-primary-600'
+                        : 'text-muted-foreground',
+                      new Date().getDate() === dayObj.day
+                        && new Date().getMonth() === currentDate.getMonth()
+                        && new Date().getFullYear() === currentDate.getFullYear()
+                        ? 'text-secondary-500'
+                        : ''
                     )}
                   >
                     {dayObj.day}
@@ -293,7 +297,7 @@ export default function MonthView({
                             event={{
                               ...dayEvents[0],
                               CustomEventComponent,
-                              minmized: true,
+                              minmized: true
                             }}
                             CustomEventModal={CustomEventModal}
                           />
@@ -302,16 +306,16 @@ export default function MonthView({
                     </AnimatePresence>
                     {dayEvents.length > 1 && (
                       <Badge
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleShowMoreEvents(dayEvents);
+                        onClick={e => {
+                          e.stopPropagation()
+                          handleShowMoreEvents(dayEvents)
                         }}
                         variant="outline"
                         className="hover:bg-default-200 absolute right-2 text-xs top-2 transition duration-300"
                       >
                         {dayEvents.length > 1
                           ? `+${dayEvents.length - 1}`
-                          : " "}
+                          : ' '}
                       </Badge>
                     )}
                   </div>
@@ -326,10 +330,10 @@ export default function MonthView({
                   )}
                 </Card>
               </motion.div>
-            );
+            )
           })}
         </motion.div>
       </AnimatePresence>
     </div>
-  );
+  )
 }

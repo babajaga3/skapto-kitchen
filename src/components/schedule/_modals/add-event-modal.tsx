@@ -1,141 +1,140 @@
-"use client";
+'use client'
 
-import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import React, { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils'
 
-import { useModal } from "@/providers/modal-context";
-import SelectDate from "@/components/schedule/_components/add-event-components/select-date";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { EventFormData, eventSchema, Variant, Event } from "@/types/index";
-import { useScheduler } from "@/providers/schedular-provider";
-import { v4 as uuidv4 } from "uuid"; // Use UUID to generate event IDs
+import { useModal } from '@/providers/modal-context'
+import SelectDate from '@/components/schedule/_components/add-event-components/select-date'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { EventFormData, eventSchema, Variant, Event } from '@/types/index'
+import { useScheduler } from '@/providers/schedular-provider'
+import { v4 as uuidv4 } from 'uuid'
+// Use UUID to generate event IDs
 
 export default function AddEventModal({
-  CustomAddEventModal,
+  CustomAddEventModal
 }: {
-  CustomAddEventModal?: React.FC<{ register: any; errors: any }>;
+  CustomAddEventModal?: React.FC<{ register: any; errors: any }>
 }) {
-  const { setClose, data } = useModal();
+  const { setClose, data } = useModal()
 
-  const [selectedColor, setSelectedColor] = useState<string>(
-    getEventColor(data?.variant || "primary")
-  );
+  const [ selectedColor, setSelectedColor ] = useState<string>(getEventColor(data?.variant || 'primary'))
 
-  const typedData = data as { default: Event };
+  const typedData = data as { default: Event }
 
-  const { handlers } = useScheduler();
+  const { handlers } = useScheduler()
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-    setValue,
+    setValue
   } = useForm<EventFormData>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       startDate: new Date(),
       endDate: new Date(),
-      variant: data?.variant || "primary",
-      color: data?.color || "blue",
-    },
-  });
+      variant: data?.variant || 'primary',
+      color: data?.color || 'blue'
+    }
+  })
 
   // Reset the form on initialization
   useEffect(() => {
     if (data?.default) {
-      const eventData = data?.default;
-      console.log("eventData", eventData);
+      const eventData = data?.default
+      console.log('eventData', eventData)
       reset({
         title: eventData.title,
-        description: eventData.description || "",
+        description: eventData.description || '',
         startDate: eventData.startDate,
         endDate: eventData.endDate,
-        variant: eventData.variant || "primary",
-        color: eventData.color || "blue",
-      });
+        variant: eventData.variant || 'primary',
+        color: eventData.color || 'blue'
+      })
     }
-  }, [data, reset]);
+  }, [ data, reset ])
 
   const colorOptions = [
-    { key: "blue", name: "Blue" },
-    { key: "red", name: "Red" },
-    { key: "green", name: "Green" },
-    { key: "yellow", name: "Yellow" },
-  ];
+    { key: 'blue', name: 'Blue' },
+    { key: 'red', name: 'Red' },
+    { key: 'green', name: 'Green' },
+    { key: 'yellow', name: 'Yellow' }
+  ]
 
   function getEventColor(variant: Variant) {
     switch (variant) {
-      case "primary":
-        return "blue";
-      case "danger":
-        return "red";
-      case "success":
-        return "green";
-      case "warning":
-        return "yellow";
+      case 'primary':
+        return 'blue'
+      case 'danger':
+        return 'red'
+      case 'success':
+        return 'green'
+      case 'warning':
+        return 'yellow'
       default:
-        return "blue";
+        return 'blue'
     }
   }
 
   function getEventStatus(color: string) {
     switch (color) {
-      case "blue":
-        return "primary";
-      case "red":
-        return "danger";
-      case "green":
-        return "success";
-      case "yellow":
-        return "warning";
+      case 'blue':
+        return 'primary'
+      case 'red':
+        return 'danger'
+      case 'green':
+        return 'success'
+      case 'yellow':
+        return 'warning'
       default:
-        return "default";
+        return 'default'
     }
   }
 
   const getButtonVariant = (color: string) => {
     switch (color) {
-      case "blue":
-        return "default";
-      case "red":
-        return "destructive";
-      case "green":
-        return "success";
-      case "yellow":
-        return "warning";
+      case 'blue':
+        return 'default'
+      case 'red':
+        return 'destructive'
+      case 'green':
+        return 'success'
+      case 'yellow':
+        return 'warning'
       default:
-        return "default";
+        return 'default'
     }
-  };
+  }
 
-  const onSubmit: SubmitHandler<EventFormData> = (formData) => {
+  const onSubmit: SubmitHandler<EventFormData> = formData => {
     const newEvent: Event = {
       id: uuidv4(), // Generate a unique ID
       title: formData.title,
       startDate: formData.startDate,
       endDate: formData.endDate,
       variant: formData.variant,
-      description: formData.description,
-    };
+      description: formData.description
+    }
 
-    if (!typedData?.default?.id) handlers.handleAddEvent(newEvent);
-    else handlers.handleUpdateEvent(newEvent, typedData.default.id);
-    setClose(); // Close the modal after submission
-  };
+    if (!typedData?.default?.id) handlers.handleAddEvent(newEvent)
+    else handlers.handleUpdateEvent(newEvent, typedData.default.id)
+    setClose() // Close the modal after submission
+  }
 
   return (
     <form className="flex flex-col gap-4 p-4" onSubmit={handleSubmit(onSubmit)}>
@@ -147,9 +146,9 @@ export default function AddEventModal({
             <Label htmlFor="title">Event Name</Label>
             <Input
               id="title"
-              {...register("title")}
+              {...register('title')}
               placeholder="Enter event name"
-              className={cn(errors.title && "border-red-500")}
+              className={cn(errors.title && 'border-red-500')}
             />
             {errors.title && (
               <p className="text-sm text-red-500">
@@ -162,7 +161,7 @@ export default function AddEventModal({
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              {...register("description")}
+              {...register('description')}
               placeholder="Enter event description"
             />
           </div>
@@ -170,7 +169,7 @@ export default function AddEventModal({
           <SelectDate
             data={{
               startDate: data?.default?.startDate || new Date(),
-              endDate: data?.default?.endDate || new Date(),
+              endDate: data?.default?.endDate || new Date()
             }}
             setValue={setValue}
           />
@@ -184,26 +183,26 @@ export default function AddEventModal({
                   className="w-fit my-2"
                 >
                   {
-                    colorOptions.find((color) => color.key === selectedColor)
+                    colorOptions.find(color => color.key === selectedColor)
                       ?.name
                   }
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                {colorOptions.map((color) => (
+                {colorOptions.map(color => (
                   <DropdownMenuItem
                     key={color.key}
                     onClick={() => {
-                      setSelectedColor(color.key);
-                      setValue("variant", getEventStatus(color.key));
+                      setSelectedColor(color.key)
+                      setValue('variant', getEventStatus(color.key))
                     }}
                   >
                     <div className="flex items-center">
                       <div
                         style={{
-                          backgroundColor: `var(--${color.key})`,
+                          backgroundColor: `var(--${color.key})`
                         }}
-                        className={`w-4 h-4 rounded-full mr-2`}
+                        className={'w-4 h-4 rounded-full mr-2'}
                       />
                       {color.name}
                     </div>
@@ -222,5 +221,5 @@ export default function AddEventModal({
         </>
       )}
     </form>
-  );
+  )
 }

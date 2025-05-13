@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import {
   Sidebar,
@@ -14,17 +14,17 @@ import {
   useSidebar
 } from '@/components/ui/sidebar'
 import { Calendar, KeyRound, Settings } from 'lucide-react'
-import { SkaptoSelector } from "./skapto-selector"
-import { Button } from "./ui/button"
-import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "./ui/drawer"
+import { SkaptoSelector } from './skapto-selector'
+import { Button } from './ui/button'
+import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from './ui/drawer'
 
 
 export function AppSidebar() {
   // TODO add sections for RAs and directors (aka roles)
 
   const { open, isMobile, openMobile, setOpenMobile } = useSidebar()
-  
-  
+
+
   if (isMobile) {
     return (
       <Drawer open={openMobile} onOpenChange={setOpenMobile}>
@@ -38,15 +38,15 @@ export function AppSidebar() {
             <h4 className='text-sm font-semibold mt-2'>Kitchen</h4>
             <Button variant='outline'><Calendar /> Booking</Button>
             <Button variant='outline'><Settings /> Settings</Button>
-            
+
             {/* <h4 className='text-sm font-semibold mt-2'>RA</h4>
             <Button variant='outline'><KeyRound /> Rules</Button>
             <Button variant='outline'><Calendar /> Calendar</Button>
-            
+
             <h4 className='text-sm font-semibold mt-2'>Director</h4>
             <Button variant='outline'><Calendar /> Booking</Button>
             <Button variant='outline'><Settings /> Settings</Button> */}
-            
+
             <DrawerClose asChild>
               <Button variant="ghost" className='mt-4'>Cancel</Button>
             </DrawerClose>
@@ -55,7 +55,7 @@ export function AppSidebar() {
       </Drawer>
     )
   }
-  
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className={open ? '' : 'hidden'}>
@@ -74,7 +74,7 @@ export function AppSidebar() {
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              
+
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <a href={'#'}>
@@ -83,7 +83,7 @@ export function AppSidebar() {
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              
+
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

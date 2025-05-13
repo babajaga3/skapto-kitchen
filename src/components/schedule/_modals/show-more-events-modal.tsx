@@ -1,31 +1,33 @@
-import EventStyled from "@/components/schedule/_components/view/event-component/event-styled";
-import { useModal } from "@/providers/modal-context";
-import { Event } from "@/types";
-import React, { useEffect, useState } from "react";
-import { CalendarIcon } from "lucide-react";
+import EventStyled from '@/components/schedule/_components/view/event-component/event-styled'
+import { useModal } from '@/providers/modal-context'
+import { Event } from '@/types'
+import React, { useEffect, useState } from 'react'
+import { CalendarIcon } from 'lucide-react'
+
 
 export default function ShowMoreEventsModal() {
-  const { data } = useModal();
-  console.log(data);
-  const dayEvents = data?.default?.dayEvents || [];
+  const { data } = useModal()
+  console.log(data)
 
-  const [events, setEvents] = useState<Event[]>(dayEvents);
+  const dayEvents = data?.default?.dayEvents || []
+
+  const [ events, setEvents ] = useState<Event[]>(dayEvents)
 
   useEffect(() => {
-    setEvents(dayEvents);
-  }, [dayEvents]);
+    setEvents(dayEvents)
+  }, [ dayEvents ])
 
   return (
     <div className="flex flex-col gap-2">
       {events.length > 0 ? (
         events.map((event: Event) => (
           <EventStyled
-            onDelete={(id) => {
-              setEvents(events.filter((event) => event.id !== id));
+            onDelete={id => {
+              setEvents(events.filter(event => event.id !== id))
             }}
             key={event.id}
             event={{
-              ...event,
+              ...event
             }}
           />
         ))
@@ -37,5 +39,5 @@ export default function ShowMoreEventsModal() {
         </div>
       )}
     </div>
-  );
+  )
 }
