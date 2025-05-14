@@ -37,7 +37,7 @@ export function SkaptoSelector() {
               <span className="font-semibold">
                 Current Kitchen
               </span>
-              <span className="">
+              <span className="text-muted-foreground">
                 {tr[position]}
               </span>
             </div>
@@ -48,7 +48,8 @@ export function SkaptoSelector() {
       <DropdownMenuContent className="w-(--radix-popper-anchor-width)">
         <DropdownMenuLabel>Select your kitchen</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
+        {/* @ts-expect-error stoopid todo fix later */}
+        <DropdownMenuRadioGroup value={position} onValueChange={(value: SkaptoKey) => setPosition(value)}>
           <DropdownMenuRadioItem value="sk1">Skaptopara I</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="sk2c">Skaptopara II (card)</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="sk2k">Skaptopara II (key)</DropdownMenuRadioItem>

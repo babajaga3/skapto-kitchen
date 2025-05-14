@@ -14,6 +14,7 @@ export default function Calendar() {
     <div className='h-full w-full overflow-auto'>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        key={isMobile ? 'mobile' : 'desktop'} // Force re-render so initView expression works below
         initialView={isMobile ? 'timeGridDay' : 'timeGridWeek'}
         height='100%'
         expandRows

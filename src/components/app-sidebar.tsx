@@ -17,6 +17,7 @@ import { Calendar, KeyRound, Settings, User } from 'lucide-react'
 import { SkaptoSelector } from './skapto-selector'
 import { Button } from './ui/button'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from './ui/drawer'
+import { UserMenu } from './user-menu'
 
 
 export function AppSidebar() {
@@ -106,7 +107,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        {/* Add footer thingy with log out here */}
+        <UserMenu />
       </SidebarFooter>
     </Sidebar>
   )

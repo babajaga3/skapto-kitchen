@@ -1,15 +1,25 @@
+'use client'
+
 import { AppSidebar } from '@/components/app-sidebar'
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { Button } from '@/components/ui/button'
+import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar'
+import { useIsMobile } from '@/hooks/use-mobile'
+import { Menu, PanelLeft } from 'lucide-react'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const isMobile = useIsMobile()
+  const { toggleSidebar } = useSidebar()
+
   return (
-    <SidebarProvider className="flex h-screen w-screen overflow-hidden">
+    <>
       <AppSidebar />
 
       <main className="flex flex-col flex-1 overflow-hidden">
         {/* Static header / trigger */}
         <div className="p-4 border-b shrink-0">
-          <SidebarTrigger />
+          <Button variant={isMobile ? 'outline' : 'ghost'} onClick={toggleSidebar}>
+            {isMobile ? <Menu /> : <PanelLeft />}
+          </Button>
         </div>
 
         {/* Scrollable calendar area */}
@@ -17,6 +27,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {children}
         </div>
       </main>
-    </SidebarProvider>
+    </>
   )
 }
