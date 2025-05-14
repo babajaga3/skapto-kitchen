@@ -85,6 +85,44 @@
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #cccccc;
   --sidebar-ring: #3d5896;
+  
+  
+  /* FULL CALENDAR VARS */
+    --fc-small-font-size: 0.875rem;
+    --fc-page-bg-color: #ffffff;
+    --fc-neutral-bg-color: #f5f5f5;
+    --fc-neutral-text-color: #4f4f4f;
+    --fc-border-color: #cccccc;
+  
+    /* Buttons (Primary AUBG Blue) */
+    --fc-button-text-color: #ffffff;
+    --fc-button-bg-color: #3d5896;
+    --fc-button-border-color: #3d5896;
+    --fc-button-hover-bg-color: #2f4474;
+    --fc-button-hover-border-color: #2f4474;
+    --fc-button-active-bg-color: #223152;
+    --fc-button-active-border-color: #223152;
+  
+    /* Events (Accent Orange) */
+    --fc-event-bg-color: #e66b16;
+    --fc-event-border-color: #e66b16;
+    --fc-event-text-color: #ffffff;
+    --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.2);
+  
+    --fc-more-link-bg-color: #e0e0e0;
+    --fc-more-link-text-color: #3d5896;
+  
+    --fc-event-resizer-thickness: 8px;
+    --fc-event-resizer-dot-total-width: 8px;
+    --fc-event-resizer-dot-border-width: 1px;
+  
+    /* Backgrounds & Highlights */
+    --fc-non-business-color: rgba(208, 208, 208, 0.3);
+    --fc-bg-event-color: #c0cbe0; /* brand.100 */
+    --fc-bg-event-opacity: 0.4;
+    --fc-highlight-color: rgba(227, 233, 242, 0.5); /* brand.50-ish */
+    --fc-today-bg-color: rgba(255, 133, 48, 0.15); /* soft orange highlight */
+    --fc-now-indicator-color: #e66b16; /* same as event color */
 }
 
 .dark {
@@ -127,6 +165,32 @@
   --sidebar-accent-foreground: #1d0b00;
   --sidebar-border: #4f4f4f;
   --sidebar-ring: #7a8fc0;
+  
+  /* FULL CALENDAR VARS */
+    --fc-page-bg-color: #0f0f0f;
+    --fc-neutral-bg-color: #2f2f2f;
+    --fc-neutral-text-color: #e0e0e0;
+    --fc-border-color: #4f4f4f;
+    
+    --fc-button-text-color: #ffffff;
+    --fc-button-bg-color: #7a8fc0;
+    --fc-button-border-color: #7a8fc0;
+    --fc-button-hover-bg-color: #9dadd0;
+    --fc-button-hover-border-color: #9dadd0;
+    --fc-button-active-bg-color: #c0cbe0;
+    --fc-button-active-border-color: #c0cbe0;
+    
+    --fc-event-bg-color: #ffa05c;
+    --fc-event-border-color: #ffa05c;
+    --fc-event-text-color: #1d0b00;
+    
+    --fc-more-link-bg-color: #2f2f2f;
+    --fc-more-link-text-color: #ffa05c;
+    
+    --fc-bg-event-color: #2f4474;
+    --fc-highlight-color: rgba(255, 133, 48, 0.15);
+    --fc-today-bg-color: rgba(255, 133, 48, 0.1);
+    --fc-now-indicator-color: #ffa05c;
 }
 
 
