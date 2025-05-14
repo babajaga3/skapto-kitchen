@@ -4,14 +4,17 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 
 export default function Calendar() {
+  const isMobile = useIsMobile()
+  
   return (
     <div className='h-full w-full overflow-auto'>
       <FullCalendar
-        plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
-        initialView="timeGridWeek"
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        initialView={isMobile ? 'timeGridDay' : 'timeGridWeek'}
         height='100%'
         expandRows
         allDaySlot={false}
@@ -32,9 +35,16 @@ export default function Calendar() {
           month: 'short'
         }}
         headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'timeGridWeek,timeGridDay' // user can switch between the two
+          left: `prev,next${isMobile ? '' : ' today'}`,
+          center: isMobile ? '' : 'title',
+          right: `${isMobile ? 'timeGridFourDay' : 'timeGridWeek'},timeGridDay` /* user can switch between the two*/
+        }}
+        views={{
+          timeGridFourDay: {
+            type: 'timeGrid',
+            duration: { days: 3 },
+            buttonText: '3 day'
+          }
         }}
       />
     </div>

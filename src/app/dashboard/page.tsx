@@ -1,9 +1,8 @@
-import Calendar from '@/components/calendar'
-
+import Calendar from "@/components/calendar";
 
 export default function DashboardPage() {
   return (
-    <main className="w=[400px] p-4">
+    <main className="h-full p-4">
       <Calendar />
     </main>
   )
