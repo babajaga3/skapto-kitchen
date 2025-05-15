@@ -7,11 +7,13 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ChevronsUpDown, LogOut } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { motion, AnimatePresence } from 'framer-motion'
 
 
 export function UserMenu({
-  isMobile
-}: { isMobile?: boolean }) {
+  isMobile,
+  sidebarOpen
+}: { isMobile?: boolean; sidebarOpen?: boolean }) {
 
   if (isMobile) {
     return (
@@ -40,19 +42,54 @@ export function UserMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className='group/button flex justify-between p-8'>
-          <div className='flex flex-row items-center gap-2'>
-            <Avatar>
-              <AvatarImage src='https://avatars.githubusercontent.com/u/63297306' />
+        <motion.div
+          layout
+          transition={{ type: 'spring', stiffness: 400, damping: 40 }}
+          className={`flex items-center justify-between overflow-hidden ${sidebarOpen && 'p-1'} hover:bg-sidebar-primary-foreground transition-all duration-200 rounded-md`}
+        >
+          <Avatar
+            className="shrink-0"
+            asChild
+          >
+            <motion.div layoutId="user-avatar">
+              <AvatarImage src="https://avatars.githubusercontent.com/u/63297306" />
               <AvatarFallback>TB</AvatarFallback>
-            </Avatar>
-            <span className='flex flex-col items-start'>
-              <h3 className='dark:text-primary-foreground'>Toma Bourov</h3>
-              <p className='text-xs text-muted-foreground group-hover/button:text-muted-foreground-hover'>tnb241@aubg.edu</p>
-            </span>
-          </div>
-          <ChevronsUpDown className='dark:text-primary-foreground' />
-        </Button>
+            </motion.div>
+          </Avatar>
+
+          <AnimatePresence>
+            {sidebarOpen && (
+              <motion.div
+                key="user-info"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.2 }}
+                className="ml-2 flex flex-col items-start"
+              >
+                <h3 className="font-semibold dark:text-primary-foreground">
+                  Toma Bourov
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  tnb241@aubg.edu
+                </p>
+              </motion.div>
+            )}
+
+            {sidebarOpen && (
+              <motion.div
+                key="chevron"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="ml-auto"
+              >
+                <ChevronsUpDown className="size-5 dark:text-primary-foreground" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-(--radix-popper-anchor-width)">
         <DropdownMenuItem>

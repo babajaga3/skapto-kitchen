@@ -107,7 +107,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <UserMenu />
+        <UserMenu sidebarOpen={open} />
       </SidebarFooter>
     </Sidebar>
   )
