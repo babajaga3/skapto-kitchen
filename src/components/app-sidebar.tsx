@@ -38,8 +38,21 @@ export function AppSidebar() {
           <span className="self-center border-b-2 w-11/12" />
           <DrawerFooter>
             <h4 className='text-sm font-semibold mt-2'>Kitchen</h4>
-            <Button variant='outline'><Calendar /> Schedule</Button>
-            <Button variant='outline'><User /> My bookings</Button>
+            <Button asChild variant='outline'>
+              <Link href='/dashboard'>
+                <Calendar /> Schedule
+              </Link>
+            </Button>
+            <Button asChild variant='outline'>
+              <Link href='/dashboard/bookings'>
+                <User /> My bookings
+              </Link>
+            </Button>
+            <Button asChild variant='outline'>
+              <Link href='/dashboard/settings'>
+                <Settings /> Settings
+              </Link>
+            </Button>
 
             {/* <h4 className='text-sm font-semibold mt-2'>RA</h4>
             <Button variant='outline'><Settings /> Settings</Button>
@@ -47,8 +60,7 @@ export function AppSidebar() {
             <Button variant='outline'><Calendar /> Calendar</Button>
 
             <h4 className='text-sm font-semibold mt-2'>Director</h4>
-            <Button variant='outline'><Calendar /> Booking</Button>
-            <Button variant='outline'><Settings /> Settings</Button> */}
+            <Button variant='outline'><Calendar /> Booking</Button> */}
 
             <DrawerClose asChild>
               <Button variant="ghost" className='mt-4'>Cancel</Button>
