@@ -45,7 +45,7 @@ export function UserMenu({
         <motion.div
           layout
           transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-          className={`flex items-center justify-between overflow-hidden ${sidebarOpen && 'p-1'} hover:bg-sidebar-primary-foreground transition-all duration-200 rounded-md`}
+          className={`flex items-center justify-between overflow-hidden ${sidebarOpen && 'p-1'} hover:bg-sidebar-primary-foreground dark:hover:bg-black transition-all duration-200 rounded-md`}
         >
           <Avatar
             className="shrink-0"
