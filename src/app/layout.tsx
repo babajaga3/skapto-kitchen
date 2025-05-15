@@ -2,7 +2,6 @@ import { Toaster } from '@/components/ui/sonner'
 import type { Metadata } from 'next'
 import { Open_Sans, Roboto_Slab } from 'next/font/google'
 import './globals.css'
-import { SidebarProvider } from '@/components/ui/sidebar'
 
 
 const robotoSlab = Roboto_Slab({
@@ -32,10 +31,8 @@ export default function RootLayout({
       <body
         className={`${robotoSlab.variable} ${openSans.variable} antialiased bg-background`}
       >
-        <SidebarProvider className="flex h-screen w-screen overflow-hidden">
-          {children}
-          <Toaster />
-        </SidebarProvider>
+        {children}
+        <Toaster />
       </body>
     </html>
   )
