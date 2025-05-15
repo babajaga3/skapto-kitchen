@@ -14,6 +14,7 @@ import {
   useSidebar
 } from '@/components/ui/sidebar'
 import { Calendar, KeyRound, Settings, User } from 'lucide-react'
+import Link from 'next/link'
 import { SkaptoSelector } from './skapto-selector'
 import { Button } from './ui/button'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from './ui/drawer'
@@ -37,17 +38,17 @@ export function AppSidebar() {
           <span className="self-center border-b-2 w-11/12" />
           <DrawerFooter>
             <h4 className='text-sm font-semibold mt-2'>Kitchen</h4>
+            <Button variant='outline'><Calendar /> Schedule</Button>
             <Button variant='outline'><User /> My bookings</Button>
-            <Button variant='outline'><Calendar /> Calendar</Button>
 
-            <h4 className='text-sm font-semibold mt-2'>RA</h4>
+            {/* <h4 className='text-sm font-semibold mt-2'>RA</h4>
             <Button variant='outline'><Settings /> Settings</Button>
             <Button variant='outline'><KeyRound /> Rules</Button>
             <Button variant='outline'><Calendar /> Calendar</Button>
 
             <h4 className='text-sm font-semibold mt-2'>Director</h4>
             <Button variant='outline'><Calendar /> Booking</Button>
-            <Button variant='outline'><Settings /> Settings</Button>
+            <Button variant='outline'><Settings /> Settings</Button> */}
 
             <DrawerClose asChild>
               <Button variant="ghost" className='mt-4'>Cancel</Button>
@@ -65,24 +66,24 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Kitchens</SidebarGroupLabel>
+          <SidebarGroupLabel>Kitchen</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a href={'#'}>
-                    <User />
-                    <span>My bookings</span>
-                  </a>
+                  <Link href={'/dashboard'}>
+                    <Calendar />
+                    <span>Schedule</span>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a href={'#'}>
-                    <Calendar />
-                    <span>Calendar</span>
-                  </a>
+                  <Link href={'/dashboard/bookings'}>
+                    <User />
+                    <span>My bookings</span>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -95,10 +96,10 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a href={'#'}>
+                  <Link href={'/dashboard/settings'}>
                     <Settings />
                     <span>Settings</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
