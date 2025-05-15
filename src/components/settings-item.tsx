@@ -1,5 +1,5 @@
-import { Microwave } from "lucide-react"
-import { ReactNode } from "react"
+import { ReactNode } from 'react'
+
 
 export function SettingsItem({
   title,
@@ -16,7 +16,7 @@ export function SettingsItem({
         <h1 className="text-muted-foreground font-semibold">{title}</h1>
         <p className="text-base ">{description}</p>
       </div>
-      <div>       
+      <div>
         {item}
       </div>
     </div>
