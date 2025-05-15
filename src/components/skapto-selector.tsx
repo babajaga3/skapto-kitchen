@@ -30,19 +30,19 @@ export function SkaptoSelector() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={'outline'} className={'flex justify-between h-auto hover:!bg-accent'}>
+        <Button variant={'outline'} className={'group/button flex justify-between h-auto'}>
           <div className="flex items-center gap-2">
-            <Microwave className="size-8" />
+            <Microwave className="size-8 dark:text-primary-foreground" />
             <div className="flex flex-col items-start">
-              <span className="font-semibold">
+              <span className="font-semibold dark:text-primary-foreground">
                 Current Kitchen
               </span>
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground group-hover/button:text-muted-foreground-hover">
                 {tr[position]}
               </span>
             </div>
           </div>
-          <ChevronsUpDown />
+          <ChevronsUpDown className='dark:text-primary-foreground' />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-(--radix-popper-anchor-width)">
