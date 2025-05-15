@@ -9,11 +9,11 @@ import { useIsMobile } from '@/hooks/use-mobile'
 
 export default function Calendar() {
   const isMobile = useIsMobile()
-  
+
   return (
     <div className='h-full w-full overflow-auto'>
       <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
         key={isMobile ? 'mobile' : 'desktop'} // Force re-render so initView expression works below
         initialView={isMobile ? 'timeGridDay' : 'timeGridWeek'}
         height='100%'
@@ -38,7 +38,7 @@ export default function Calendar() {
         headerToolbar={{
           left: `prev,next${isMobile ? '' : ' today'}`,
           center: isMobile ? '' : 'title',
-          right: `${isMobile ? 'timeGridFourDay' : 'timeGridWeek'},timeGridDay` /* user can switch between the two*/
+          right: `${isMobile ? 'timeGridFourDay' : 'timeGridWeek'},timeGridDay` /* user can switch between the two */
         }}
         views={{
           timeGridFourDay: {
