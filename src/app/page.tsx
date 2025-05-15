@@ -21,6 +21,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 
 export default function Home() {
@@ -37,7 +38,7 @@ export default function Home() {
   })
 
   return (
-    <div className="h-screen flex flex-col gap-8 justify-center items-center">
+    <div className="h-screen flex flex-col gap-8 self-center justify-center items-center">
       <div className="flex flex-col items-center gap-2">
         <h3 className="scroll-m-20 text-xl font-semibold tracking-tight">Select your Skapto</h3>
         <p className="text-sm text-muted-foreground mx-12 sm:mx-0">
@@ -69,7 +70,11 @@ export default function Home() {
           )}
         />
 
-        <Button type="submit">Next</Button>
+        <Button asChild type="submit">
+          <Link href={'/dashboard'}>
+            Next
+          </Link>
+        </Button>
 
       </Form>
 
