@@ -1,10 +1,13 @@
 import { SidebarProvider } from '@/components/ui/sidebar'
+import { BookingModalProvider } from '@/providers/booking-modal-provider'
 
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider className="flex h-screen w-screen overflow-hidden">
-      {children}
-    </SidebarProvider>
+    <BookingModalProvider>
+      <SidebarProvider className="flex h-screen w-screen overflow-hidden">
+          {children}
+      </SidebarProvider>
+    </BookingModalProvider>
   )
 }
