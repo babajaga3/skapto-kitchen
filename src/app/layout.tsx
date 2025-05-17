@@ -2,6 +2,7 @@ import { Toaster } from '@/components/ui/sonner'
 import type { Metadata } from 'next'
 import { Open_Sans, Roboto_Slab } from 'next/font/google'
 import './globals.css'
+import TanstackQueryProvider from '@/providers/tanstack-query'
 
 
 const robotoSlab = Roboto_Slab({
@@ -31,8 +32,10 @@ export default function RootLayout({
       <body
         className={`${robotoSlab.variable} ${openSans.variable} antialiased bg-background`}
       >
-        {children}
-        <Toaster />
+        <TanstackQueryProvider>
+          {children}
+          <Toaster />
+        </TanstackQueryProvider>
       </body>
     </html>
   )
