@@ -39,17 +39,17 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 // import { Input } from './ui/input'
 import { CalendarEvents } from '@/db/calendar-events'
 import { BMDates, BMHours } from '@/lib/helpers'
-import { useMemo } from 'react'
-import Cookies from 'js-cookie'
 import { kitchens } from '@/types/skapto-kitchens'
+import { useKitchen } from '@/hooks/use-kitchen'
 
+
+type EventPayload = Omit<CalendarEvent, 'id' | 'created' | 'updated'>
 
 export function BookingModal() {
   const { open, setOpen } = useBookingModal()
   const isMobile = useIsMobile()
   const queryClient = useQueryClient()
-
-  const defaultKitchen = useMemo(() => Cookies.get('main-kitchen'), [])
+  const { kitchen } = useKitchen()
 
   // Form Schema
   const zFormSchema = z.strictObject({
@@ -81,7 +81,6 @@ export function BookingModal() {
     )
 
   type FormSchema = z.infer<typeof zFormSchema>
-  type EventPayload = Omit<CalendarEvent, 'id' | 'created' | 'updated'>
 
   // Define form
   const form = useForm<FormSchema>({
@@ -90,7 +89,7 @@ export function BookingModal() {
       studentName: 'Toma Bourov',
       studentId: 200274715,
       date: DateTime.now().startOf('day').toUTC().toISO(), // Use today as default
-      kitchen: defaultKitchen as SkaptoKitchens ?? SkaptoKitchens.SkaptoOne
+      kitchen
     }
   })
 
@@ -133,10 +132,10 @@ export function BookingModal() {
   const { startOfDate, endOfDate } = BMDates.constructTimeRangeOfDate(form.watch('date'))
 
   // Construct filter
-  const filter = `start >= "${startOfDate}" && end <= "${endOfDate}"`
+  const filter = `start >= "${startOfDate}" && end <= "${endOfDate}" && kitchen = "${form.watch('kitchen')}"`
 
   const { data } = useQuery({
-    queryKey: [ 'events', 'all', startOfDate ],
+    queryKey: [ 'events', 'all', startOfDate, form.watch('kitchen') ],
     queryFn: () => CalendarEvents.getAll(filter),
     enabled: !!form.watch('date'), // Call only if a date has been selected
     select: bookings => {
@@ -204,6 +203,11 @@ export function BookingModal() {
                                 value={value}
                                 key={index}
                                 onSelect={() => {
+                                  // Reset times when changing kitchen
+                                  form.resetField('start')
+                                  form.resetField('end')
+
+                                  // Set kitchen value
                                   form.setValue('kitchen', value)
                                 }}
                               >
