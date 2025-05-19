@@ -21,7 +21,7 @@ export default function SettingsPage() {
   return (
     <>
       {/* Section title */}
-      <h1 className="text-xl font-bold ">Appearance</h1>
+      <h1 className="text-xl font-bold ">Appearance (🚧 not yet functional 🚧)</h1>
 
       {/* Section contents (animated) */}
       <motion.div
