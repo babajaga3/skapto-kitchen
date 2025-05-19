@@ -46,7 +46,7 @@ import { useKitchen } from '@/hooks/use-kitchen'
 type EventPayload = Omit<CalendarEvent, 'id' | 'created' | 'updated'>
 
 export function BookingModal() {
-  const { open, setOpen } = useBookingModal()
+  const { open, openMobile, toggleModal } = useBookingModal()
   const isMobile = useIsMobile()
   const queryClient = useQueryClient()
   const { kitchen } = useKitchen()
@@ -115,7 +115,7 @@ export function BookingModal() {
     mutationFn: (values: EventPayload) => CalendarEvents.create(values),
     onSuccess: () => {
       toast('Your booking was successfully created!')
-      setOpen(false)
+      toggleModal()
     },
     onError: () => {
       toast('Something went wrong creating your booking.', {
@@ -151,7 +151,7 @@ export function BookingModal() {
   // console.log(form.getValues())
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open || openMobile} onOpenChange={toggleModal}>
       <DialogContent>
 
         {/* Header */}
@@ -517,7 +517,7 @@ export function BookingModal() {
 
             {/* Submit button */}
 
-            <Button type="submit">Submit</Button>
+            <Button className={'w-full'} type="submit">Submit</Button>
           </form>
         </Form>
 

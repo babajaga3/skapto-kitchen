@@ -57,7 +57,7 @@ export default function Calendar() {
         headerToolbar={{
           left: `prev,next${isMobile ? '' : ' today'}`,
           center: isMobile ? '' : 'addBooking',
-          right: `${isMobile ? 'timeGridFourDay' : 'timeGridWeek'},timeGridDay` /* user can switch between the two */
+          right: `${isMobile ? 'timeGridFourDay' : ''},timeGridDay` /* user can switch between the two */
         }}
         views={{
           timeGridFourDay: {
