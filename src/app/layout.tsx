@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Open_Sans, Roboto_Slab } from 'next/font/google'
 import './globals.css'
 import TanstackQueryProvider from '@/providers/tanstack-query'
+import { KitchenProvider } from '@/providers/kitchen-provider'
 
 
 const robotoSlab = Roboto_Slab({
@@ -33,8 +34,10 @@ export default function RootLayout({
         className={`${robotoSlab.variable} ${openSans.variable} antialiased bg-background`}
       >
         <TanstackQueryProvider>
-          {children}
-          <Toaster />
+          <KitchenProvider>
+            {children}
+            <Toaster />
+          </KitchenProvider>
         </TanstackQueryProvider>
       </body>
     </html>

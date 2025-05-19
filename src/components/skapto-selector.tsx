@@ -1,7 +1,5 @@
 'use client'
 
-import * as React from 'react'
-
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -12,20 +10,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Microwave, ChevronsUpDown } from 'lucide-react'
+import { ChevronsUpDown, Microwave } from 'lucide-react'
+import { kitchens } from '@/types/skapto-kitchens'
+import { SkaptoKitchens } from '@/types/calendar-events'
+import { useKitchen } from '@/hooks/use-kitchen'
 
-
-type SkaptoKey = 'sk1' | 'sk2c' | 'sk2k' | 'sk3'
 
 export function SkaptoSelector() {
-  const [ position, setPosition ] = React.useState<SkaptoKey>('sk1')
+  const { kitchen, setKitchen } = useKitchen()
 
-  const tr: Record<SkaptoKey, string> = {
-    sk1: 'Skaptopara I',
-    sk2c: 'Skaptopara II (card)',
-    sk2k: 'Skaptopara II (key)',
-    sk3: 'Skaptopara III'
-  }
 
   return (
     <DropdownMenu>
@@ -38,7 +31,7 @@ export function SkaptoSelector() {
                 Current Kitchen
               </span>
               <span className="text-muted-foreground group-hover/button:text-muted-foreground-hover">
-                {tr[position]}
+                {Object.entries(kitchens).find(([ _key, value ]) => value === kitchen)?.[0]}
               </span>
             </div>
           </div>
@@ -48,12 +41,13 @@ export function SkaptoSelector() {
       <DropdownMenuContent className="w-(--radix-popper-anchor-width)">
         <DropdownMenuLabel>Select your kitchen</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {/* @ts-expect-error stoopid todo fix later */}
-        <DropdownMenuRadioGroup value={position} onValueChange={(value: SkaptoKey) => setPosition(value)}>
-          <DropdownMenuRadioItem value="sk1">Skaptopara I</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="sk2c">Skaptopara II (card)</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="sk2k">Skaptopara II (key)</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="sk3">Skaptopara III</DropdownMenuRadioItem>
+        <DropdownMenuRadioGroup
+          value={kitchen ?? undefined}
+          onValueChange={value => setKitchen(value as SkaptoKitchens)}
+        >
+          {Object.entries(kitchens).map(([ key, value ]) => (
+            <DropdownMenuRadioItem key={value} value={value}>{key}</DropdownMenuRadioItem>
+          ))}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
