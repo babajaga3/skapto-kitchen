@@ -308,9 +308,14 @@ export function BookingModal() {
                         onSelect={newDate => {
                           if (newDate) field.onChange(DateTime.fromJSDate(newDate).toUTC().toString())
                         }}
-                        disabled={date =>
-                          date > new Date() || date < new Date('1900-01-01')
-                        }
+                        disabled={date => {
+                          // Allow today and tomorrow only (will be programmable on a Skapto-basis)
+                          const luxonDate = DateTime.fromJSDate(date).startOf('day')
+                          const today = DateTime.now().startOf('day')
+                          const tomorrow = today.plus({ days: 1 })
+                        
+                          return !luxonDate.equals(today) && !luxonDate.equals(tomorrow)
+                        }}
                         initialFocus
                       />
                     </PopoverContent>
