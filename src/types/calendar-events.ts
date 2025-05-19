@@ -12,9 +12,9 @@ export enum SkaptoKitchens {
 }
 
 // ChatGPT'd
-const utcDateZod = z
+export const utcDateZod = z
   .string()
-  .refine((val) => {
+  .refine(val => {
     const dt = DateTime.fromISO(val, { zone: 'utc' })
     return dt.isValid && dt.toISO() === val
   }, {
