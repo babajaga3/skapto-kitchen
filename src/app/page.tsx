@@ -1,5 +1,13 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage
+} from '@/components/ui/form'
 import {
   Select,
   SelectContent,
@@ -7,75 +15,71 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form'
+import { SkaptoKitchens } from '@/types/calendar-events'
+import { kitchens } from '@/types/skapto-kitchens'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { redirect } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 
 
 export default function Home() {
-  const FormSchema = z.object({
-    resHall: z.enum([ 'sk1', 'sk2', 'sk3' ], {
-      errorMap: () => ({
-        message: 'Please select a valid Skapto.'
-      })
-    })
+  const zFormSchema = z.strictObject({
+    kitchen: z.nativeEnum(SkaptoKitchens)
   })
-
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema)
+  
+  type FormSchema = z.infer<typeof zFormSchema>
+  
+  const form = useForm<FormSchema>({
+    resolver: zodResolver(zFormSchema),
+    defaultValues: {
+      kitchen: SkaptoKitchens.SkaptoOne
+    }
   })
+  
+  function onSubmit(values: FormSchema) {
+    localStorage.setItem('main-kitchen', values.kitchen) // on device basis for now
+    toast('Sucessfully set your kitchen. Enjoy!') // nice message
+    redirect('/dashboard') // redirect user to the main dashboard page
+  }
 
   return (
     <div className="h-screen flex flex-col gap-8 self-center justify-center items-center">
       <div className="flex flex-col items-center gap-2">
-        <h3 className="scroll-m-20 text-xl font-semibold tracking-tight">Select your Skapto</h3>
+        <h3 className="scroll-m-20 text-xl font-semibold tracking-tight">Select your Skapto kitchen</h3>
         <p className="text-sm text-muted-foreground mx-12 sm:mx-0">
-          Choose the Skapto where you will be cooking the most. Don't worry, you can change this later!
+          Choose the Skapto where you will be cooking the most. Don&apos;t worry, you can change this later!
         </p>
       </div>
       <Form {...form}>
-        <FormField
-          control={form.control}
-          name="resHall"
-          render={({ field }) => (
-            <FormItem>
-              {/* <FormLabel>Username</FormLabel> */}
-              <FormControl>
-                <Select {...field} >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select Skapto" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="sk1">Skaptopara I</SelectItem>
-                    <SelectItem value="sk2">Skaptopara II</SelectItem>
-                    <SelectItem value="sk3">Skaptopara III</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              {/* <FormDescription>This is your public display name.</FormDescription> */}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button asChild type="submit">
-          <Link href={'/dashboard'}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <FormField
+            control={form.control}
+            name="kitchen"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Select {...field} value={field.value} onValueChange={field.onChange} >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select kitchen" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(kitchens).map(([key, value]) => (
+                        <SelectItem key={key} value={value}>{key}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+  
+          <Button className='mt-8 w-full' type="submit">
             Next
-          </Link>
-        </Button>
-
+          </Button>
+        </form>
       </Form>
 
     </div>
