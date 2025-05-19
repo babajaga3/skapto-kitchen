@@ -26,8 +26,7 @@ export function BookingModalProvider({
 }: React.ComponentProps<'div'> & {
   open?: boolean
   onOpenChange?: (open: boolean) => void
-}
-) {
+}) {
   const isMobile = useIsMobile()
   const [ openMobile, setOpenMobile ] = React.useState(false)
 
@@ -64,13 +63,11 @@ export function BookingModalProvider({
     [ open, setOpen, isMobile, openMobile, setOpenMobile, toggleModal ]
   )
 
-  
+
   return (
     <BookingModalContext.Provider value={contextValue}>
       <div
-        className={cn(
-          className
-        )}
+        className={cn(className)}
         {...props}
       >
         {children}

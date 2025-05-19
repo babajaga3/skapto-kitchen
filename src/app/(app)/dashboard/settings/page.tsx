@@ -1,28 +1,28 @@
 'use client'
 
-import { SettingsItem } from "@/components/settings-item"
-import { Button } from "@/components/ui/button"
+import { SettingsItem } from '@/components/settings-item'
+import { Button } from '@/components/ui/button'
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
-import { ChevronDown } from "lucide-react"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { ChevronDown } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 
 export default function SettingsPage() {
-  
-  
+
+
   return (
     <>
       {/* Section title */}
       <h1 className="text-xl font-bold ">Appearance</h1>
-      
+
       {/* Section contents (animated) */}
       <motion.div
         key={'appearance-options'}
@@ -54,7 +54,7 @@ export default function SettingsPage() {
             </DropdownMenu>
           }
         />
-        
+
         <SettingsItem
           title="Theme"
           description="You can change the interface theme here (i.e. dark or light)."
@@ -77,7 +77,7 @@ export default function SettingsPage() {
             </DropdownMenu>
           }
         />
-      </motion.div>      
+      </motion.div>
     </>
   )
 }

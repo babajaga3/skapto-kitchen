@@ -16,6 +16,7 @@ export const utcDateZod = z
   .string()
   .refine(val => {
     const dt = DateTime.fromISO(val, { zone: 'utc' })
+
     return dt.isValid && dt.toISO() === val
   }, {
     message: 'Please select a valid date'

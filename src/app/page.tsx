@@ -22,24 +22,25 @@ import { redirect } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import Cookies from 'js-cookie'
 
 
 export default function Home() {
   const zFormSchema = z.strictObject({
     kitchen: z.nativeEnum(SkaptoKitchens)
   })
-  
+
   type FormSchema = z.infer<typeof zFormSchema>
-  
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(zFormSchema),
     defaultValues: {
       kitchen: SkaptoKitchens.SkaptoOne
     }
   })
-  
+
   function onSubmit(values: FormSchema) {
-    localStorage.setItem('main-kitchen', values.kitchen) // on device basis for now
+    Cookies.set('main-kitchen', values.kitchen) // on device basis for now
     toast('Sucessfully set your kitchen. Enjoy!') // nice message
     redirect('/dashboard') // redirect user to the main dashboard page
   }
@@ -65,7 +66,7 @@ export default function Home() {
                       <SelectValue placeholder="Select kitchen" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(kitchens).map(([key, value]) => (
+                      {Object.entries(kitchens).map(([ key, value ]) => (
                         <SelectItem key={key} value={value}>{key}</SelectItem>
                       ))}
                     </SelectContent>
@@ -75,7 +76,7 @@ export default function Home() {
               </FormItem>
             )}
           />
-  
+
           <Button className='mt-8 w-full' type="submit">
             Next
           </Button>

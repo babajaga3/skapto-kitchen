@@ -25,11 +25,10 @@ import {
 } from '@/components/ui/popover'
 import { useBookingModal } from '@/hooks/use-booking-modal'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { pb } from '@/lib/pocketbase'
 import { cn } from '@/lib/utils'
 import { CalendarEvent, SkaptoKitchens, utcDateZod } from '@/types/calendar-events'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react'
 import { DateTime } from 'luxon'
@@ -37,7 +36,11 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command'
-import { Input } from './ui/input'
+// import { Input } from './ui/input'
+import { CalendarEvents } from '@/db/calendar-events'
+import { BMDates, BMHours } from '@/lib/helpers'
+import { useMemo } from 'react'
+import Cookies from 'js-cookie'
 
 
 export function BookingModal() {
@@ -45,15 +48,17 @@ export function BookingModal() {
   const isMobile = useIsMobile()
   const queryClient = useQueryClient()
 
+  const defaultKitchen = useMemo(() => Cookies.get('main-kitchen'), [])
+
   // Form Schema
-  const formSchema = z.strictObject({
+  const zFormSchema = z.strictObject({
     studentName: z.string().min(1),
     studentId: z
       .number()
       .nonnegative()
       .int()
-      .min(99999999, { message: 'Your ID is 9 digits.'})
-      .max(999999999, { message: 'Your ID is 9 digits.'}),
+      .min(99999999, { message: 'Your ID is 9 digits.' })
+      .max(999999999, { message: 'Your ID is 9 digits.' }),
     date: utcDateZod,
     start: z.number().int().min(9).max(20),
     end: z.number().int().min(10).max(22),
@@ -66,7 +71,7 @@ export function BookingModal() {
         path: [ 'end' ]
       }
     )
-    .refine(
+    .refine( // Programmable later
       data => data.end <= data.start + 2,
       {
         message: 'Ending time must be within 2 hours after starting',
@@ -74,46 +79,41 @@ export function BookingModal() {
       }
     )
 
-  type FormSchema = z.infer<typeof formSchema>
+  type FormSchema = z.infer<typeof zFormSchema>
   type EventPayload = Omit<CalendarEvent, 'id' | 'created' | 'updated'>
 
   // Define form
   const form = useForm<FormSchema>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(zFormSchema),
     defaultValues: {
-      studentName: '',
-      studentId: undefined,
-      // kitchen: SkaptoKitchens.SkaptoOne // or some default
+      studentName: 'Toma Bourov',
+      studentId: 200274715,
+      date: DateTime.now().startOf('day').toUTC().toISO(), // Use today as default
+      kitchen: defaultKitchen ?? SkaptoKitchens.SkaptoOne
     }
     // todo add default values if user selects directly in calendar
   })
 
   // On submit handler
   function onSubmit(values: FormSchema) {
-    
+
     // Construct start & end db strings
-    const start = DateTime
-      .fromISO(values.date)
-      .set({ hour: values.start, minute: 0, second: 0, millisecond: 0})
-      .toString()
-    const end = DateTime
-      .fromISO(values.date)
-      .set({ hour: values.end, minute: 0, second: 0, millisecond: 0 })
-      .toString()
-  
-    const payload: EventPayload = {
+    const start = BMDates.constructDate(values.date, { hour: values.start })
+    const end = BMDates.constructDate(values.date, { hour: values.end })
+
+    const payload = {
       ...values,
       start,
       end
     }
-    
+
     mutation.mutate(payload)
   }
 
   // React query mutation
   const mutation = useMutation({
     mutationKey: [ 'events', 'create', form.getValues().studentId ], // maybe change the unique identifier
-    mutationFn: (values: EventPayload) => pb.collection('calendar_events').create<CalendarEvent>(values),
+    mutationFn: (values: EventPayload) => CalendarEvents.create(values),
     onSuccess: () => {
       toast('Your booking was successfully created!')
       setOpen(false)
@@ -129,11 +129,27 @@ export function BookingModal() {
     }
   })
 
-  // Hour array
-  const startHourArray = Array.from({ length: 21 - 9 + 1 }, (_, i) => i + 9) // support from 9 till 21
-  const endHourArray = Array.from({ length: 23 - 10 + 1 }, (_, i) => i + 9) // support from 10 till 22
-  
-  // Kitchens
+  // Use appropriate dates for filter
+  const { startOfDate, endOfDate } = BMDates.constructTimeRangeOfDate(form.watch('date'))
+
+  // Construct filter
+  const filter = `start >= "${startOfDate}" && end <= "${endOfDate}"`
+
+  const { data } = useQuery({
+    queryKey: [ 'events', 'all', startOfDate ],
+    queryFn: () => CalendarEvents.getAll(filter),
+    enabled: !!form.watch('date'), // Call only if a date has been selected
+    select: bookings => {
+      return {
+        bookings,
+        bookedHours: BMHours.getBookedHours(bookings)
+      }
+    }
+  })
+
+  const bookedHours = data?.bookedHours
+
+  // Kitchens todo make dynamic from db
   const kitchens = {
     'Skapto 1': SkaptoKitchens.SkaptoOne,
     'Skapto 2 (card)': SkaptoKitchens.SkaptoTwoCard,
@@ -141,7 +157,7 @@ export function BookingModal() {
     'Skapto 3': SkaptoKitchens.SkaptoThree
   }
 
-  console.log(form.getValues())
+  // console.log(form.getValues())
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -160,7 +176,7 @@ export function BookingModal() {
         {/* Form */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            
+
             {/* Kitchen */}
 
             <FormField
@@ -176,13 +192,13 @@ export function BookingModal() {
                           variant="outline"
                           role="combobox"
                           className={cn(
-                            "w-[200px] justify-between",
-                            !field.value && "text-muted-foreground"
+                            'w-[200px] justify-between',
+                            !field.value && 'text-muted-foreground'
                           )}
                         >
                           {field.value
-                            ? Object.entries(kitchens).find(([_, value]) => value === field.value)?.[0]
-                            : "Select kitchen"}
+                            ? Object.entries(kitchens).find(([ _, value ]) => value === field.value)?.[0]
+                            : 'Select kitchen'}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </FormControl>
@@ -191,21 +207,21 @@ export function BookingModal() {
                       <Command>
                         <CommandList>
                           <CommandGroup>
-                            {Object.entries(kitchens).map(([key, value], index) => (
+                            {Object.entries(kitchens).map(([ key, value ], index) => (
                               <CommandItem
                                 value={value}
                                 key={index}
                                 onSelect={() => {
-                                  form.setValue("kitchen", value)
+                                  form.setValue('kitchen', value)
                                 }}
                               >
                                 {key}
                                 <Check
                                   className={cn(
-                                    "ml-auto",
+                                    'ml-auto',
                                     value === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
                                   )}
                                 />
                               </CommandItem>
@@ -226,7 +242,7 @@ export function BookingModal() {
             {/* Presumably this is taken from the login information */}
             {/* Student name */}
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name='studentName'
               render={({ field }) => (
@@ -241,11 +257,11 @@ export function BookingModal() {
                   <FormMessage />
                 </FormItem>
               )}
-            />
-            
+            /> */}
+
             {/* Student ID */}
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name='studentId'
               render={({ field }) => (
@@ -272,7 +288,7 @@ export function BookingModal() {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             {/* Calendar */}
 
@@ -293,7 +309,7 @@ export function BookingModal() {
                           )}
                         >
                           {field.value ? (
-                            format(field.value, 'PPP')
+                            format(field.value, 'PPP') // todo Use luxon here later
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -304,18 +320,18 @@ export function BookingModal() {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={DateTime.fromISO(field.value).toJSDate()}
+                        selected={BMDates.fromISOToJSDate(field.value)}
                         onSelect={newDate => {
-                          if (newDate) field.onChange(DateTime.fromJSDate(newDate).toUTC().toString())
+                          if (newDate) {
+                            // Reset times, since other dates might not have the same schedule
+                            form.resetField('start')
+                            form.resetField('end')
+
+                            // Update new date of reservation
+                            field.onChange(BMDates.fromJSDateToISO(newDate))
+                          }
                         }}
-                        disabled={date => {
-                          // Allow today and tomorrow only (will be programmable on a Skapto-basis)
-                          const luxonDate = DateTime.fromJSDate(date).startOf('day')
-                          const today = DateTime.now().startOf('day')
-                          const tomorrow = today.plus({ days: 1 })
-                        
-                          return !luxonDate.equals(today) && !luxonDate.equals(tomorrow)
-                        }}
+                        disabled={date => BMDates.constructDateRangeFromJSDate(date, 2)}
                         initialFocus
                       />
                     </PopoverContent>
@@ -328,169 +344,180 @@ export function BookingModal() {
               )}
             />
 
-            <div className='flex flex-col items-start gap-8 sm:flex-row sm:items-center'>
-              {/* Starting time */}
+            {BMHours.isKitchenAvailable(bookedHours) ? (
+              <div className='flex flex-col items-start gap-8 sm:flex-row sm:items-center'>
+                {/* Starting time */}
 
-              <FormField
-                control={form.control}
-                name="start"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Starting time</FormLabel>
-                    <Popover modal={true}>
-                      
-                      {/* Trigger button */}
-                      
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              'w-[200px] justify-between',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value
-                              ? (
-                                <>
-                                  {startHourArray.find(hour => hour === field.value)?.toString().padStart(2, '0')}:00
-                                </>
-                              )
-                              : 'Select starting time'}
-                            <ChevronsUpDown className="opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      
-                      {/* Hour list */}
-                      
-                      <PopoverContent className="w-[200px] p-0">
-                        <Command>
-                          {!isMobile && <CommandInput
-                            placeholder="Search time..."
-                            className="h-9"
-                          />}
-                          <CommandList>
-                            <CommandEmpty>No hours available</CommandEmpty>
-                            <CommandGroup>
-                              
-                              {/* Hour list item */}
-                              
-                              {startHourArray.map(hour => (
-                                <CommandItem
-                                  value={hour.toString()}
-                                  key={hour}
-                                  onSelect={() => {
-                                    form.setValue('start', hour)
-                                    form.setValue('end', hour + 1)
-                                  }}
+                <FormField
+                  control={form.control}
+                  name="start"
+                  render={({ field }) => {
+                    const startHourArray = BMHours.getAvailableStartHours(bookedHours)
+
+                    return (
+                      (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Starting time</FormLabel>
+                          <Popover modal={true}>
+
+                            {/* Trigger button */}
+
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  className={cn(
+                                    'w-[200px] justify-between',
+                                    !field.value && 'text-muted-foreground'
+                                  )}
                                 >
-                                  {hour.toString().padStart(2, '0')}:00
-                                  <Check
-                                    className={cn(
-                                      'ml-auto',
-                                      hour === field.value ? 'opacity-100' : 'opacity-0'
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                    <FormDescription>
-                      Time when your booking starts.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                                  {field.value
+                                    ? (
+                                      <>
+                                        {startHourArray.find(hour => hour === field.value)?.toString().padStart(2, '0')}:00
+                                      </>
+                                    )
+                                    : 'Select starting time'}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
 
-              {/* Ending time */}
+                            {/* Hour list */}
 
-              <FormField
-                control={form.control}
-                name="end"
-                render={({ field }) => {
-                  // Make sure you can set the end time at valid times only
-                  const start = form.watch('start')
-                  const filteredEndArray = endHourArray.filter(
-                    hour => start !== undefined && hour > start && hour <= start + 2
-                  )
+                            <PopoverContent className="w-[200px] p-0">
+                              <Command>
+                                {!isMobile && <CommandInput
+                                  placeholder="Search time..."
+                                  className="h-9"
+                                />}
+                                <CommandList>
+                                  <CommandEmpty>No hours available</CommandEmpty>
+                                  <CommandGroup>
 
-                  return (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Ending time</FormLabel>
-                      <Popover>
-                        
-                        {/* Trigger button */}
-                        
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                'w-[200px] justify-between',
-                                !field.value && 'text-muted-foreground'
+                                    {/* Hour list item */}
+
+                                    {startHourArray.map(hour => (
+                                      <CommandItem
+                                        value={hour.toString()}
+                                        key={hour}
+                                        onSelect={() => {
+                                          form.setValue('start', hour)
+                                          form.setValue('end', hour + 1)
+                                        }}
+                                      >
+                                        {hour.toString().padStart(2, '0')}:00
+                                        <Check
+                                          className={cn(
+                                            'ml-auto',
+                                            hour === field.value ? 'opacity-100' : 'opacity-0'
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                          <FormDescription>
+                            Time when your booking starts.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    )
+                  }}
+                />
+
+                {/* Ending time */}
+
+                <FormField
+                  control={form.control}
+                  name="end"
+                  render={({ field }) => {
+                    // Make sure you can set the end time at valid times only
+                    const start = form.watch('start')
+                    const filteredEndArray = BMHours.getAvailableEndHours(bookedHours, start)
+
+                    return (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>Ending time</FormLabel>
+                        <Popover>
+
+                          {/* Trigger button */}
+
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                className={cn(
+                                  'w-[200px] justify-between',
+                                  !field.value && 'text-muted-foreground'
+                                )}
+                              >
+                                {field.value
+                                  ? `${field.value.toString().padStart(2, '0')}:00`
+                                  : 'Select ending time'}
+                                <ChevronsUpDown className="opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+
+                          {/* Hour list */}
+
+                          <PopoverContent className="w-[200px] p-0">
+                            <Command>
+                              {!isMobile && (
+                                <CommandInput
+                                  placeholder="Search time..."
+                                  className="h-9"
+                                />
                               )}
-                            >
-                              {field.value
-                                ? `${field.value.toString().padStart(2, '0')}:00`
-                                : 'Select ending time'}
-                              <ChevronsUpDown className="opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        
-                        {/* Hour list */}
-                        
-                        <PopoverContent className="w-[200px] p-0">
-                          <Command>
-                            {!isMobile && (
-                              <CommandInput
-                                placeholder="Search time..."
-                                className="h-9"
-                              />
-                            )}
-                            <CommandList>
-                              <CommandEmpty>{!start ? 'Please select a starting time first.' : 'No valid times'}</CommandEmpty>
-                              <CommandGroup>
-                                
-                                {/* Hour item component */}
-                                
-                                {filteredEndArray.map((hour) => (
-                                  <CommandItem
-                                    value={hour.toString()}
-                                    key={hour}
-                                    onSelect={() => form.setValue('end', hour)}
-                                  >
-                                    {hour.toString().padStart(2, '0')}:00
-                                    <Check
-                                      className={cn(
-                                        'ml-auto',
-                                        hour === field.value ? 'opacity-100' : 'opacity-0'
-                                      )}
-                                    />
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                      <FormDescription>
-                        Time when your booking ends.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )
-                }}
-              />
+                              <CommandList>
+                                <CommandEmpty>{!start ? 'Please select a starting time first.' : 'No valid times'}</CommandEmpty>
+                                <CommandGroup>
 
-            </div>
+                                  {/* Hour item component */}
+
+                                  {filteredEndArray.map(hour => (
+                                    <CommandItem
+                                      value={hour.toString()}
+                                      key={hour}
+                                      onSelect={() => form.setValue('end', hour)}
+                                    >
+                                      {hour.toString().padStart(2, '0')}:00
+                                      <Check
+                                        className={cn(
+                                          'ml-auto',
+                                          hour === field.value ? 'opacity-100' : 'opacity-0'
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                        <FormDescription>
+                          Time when your booking ends.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )
+                  }}
+                />
+
+              </div>
+            ) : (
+              <div className='text-base font-semibold px-4'>
+                Sorry, this kitchen is fully booked today.
+                Try again later, or check the others for availability :)
+              </div>
+            )}
 
             {/* Submit button */}
 
