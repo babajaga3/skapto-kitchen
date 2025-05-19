@@ -93,11 +93,11 @@ export function BookingModal() {
     
     // Construct start & end db strings
     const start = DateTime
-      .fromISO(values.date, { zone: 'utc' })
-      .set({ hour: values.start, minute: 0, second: 0, millisecond: 0 })
+      .fromISO(values.date)
+      .set({ hour: values.start, minute: 0, second: 0, millisecond: 0})
       .toString()
     const end = DateTime
-      .fromISO(values.date, { zone: 'utc' })
+      .fromISO(values.date)
       .set({ hour: values.end, minute: 0, second: 0, millisecond: 0 })
       .toString()
   
@@ -226,7 +226,7 @@ export function BookingModal() {
             {/* Presumably this is taken from the login information */}
             {/* Student name */}
 
-            {/* <FormField
+            <FormField
               control={form.control}
               name='studentName'
               render={({ field }) => (
@@ -241,11 +241,11 @@ export function BookingModal() {
                   <FormMessage />
                 </FormItem>
               )}
-            /> */}
+            />
             
             {/* Student ID */}
 
-            {/* <FormField
+            <FormField
               control={form.control}
               name='studentId'
               render={({ field }) => (
@@ -272,7 +272,7 @@ export function BookingModal() {
                   <FormMessage />
                 </FormItem>
               )}
-            /> */}
+            />
 
             {/* Calendar */}
 
