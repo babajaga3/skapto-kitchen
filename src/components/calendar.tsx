@@ -1,18 +1,37 @@
 'use client'
 
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
+import { CalendarEvents } from '@/db/calendar-events'
+import { useBookingModal } from '@/hooks/use-booking-modal'
 import { useIsMobile } from '@/hooks/use-mobile'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import FullCalendar from '@fullcalendar/react'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import { useQuery } from '@tanstack/react-query'
+import { DateTime } from 'luxon'
 
 
 export default function Calendar() {
   const isMobile = useIsMobile()
+  const { toggleModal } = useBookingModal()
+
+  const eventsQuery = useQuery({
+    queryKey: [ 'events', 'all' ], // TODO add skapto as identifier
+    queryFn: () => CalendarEvents.getAll(),
+    select: data => data.map(event => {
+      return {
+        title: event.studentName,
+        start: event.start,
+        end: event.end
+      }
+    })
+  })
 
   return (
     <div className='h-full w-full overflow-auto'>
       <FullCalendar
+        timeZone='local'
+        events={eventsQuery.data}
         plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
         key={isMobile ? 'mobile' : 'desktop'} // Force re-render so initView expression works below
         initialView={isMobile ? 'timeGridDay' : 'timeGridWeek'}
@@ -37,7 +56,7 @@ export default function Calendar() {
         }}
         headerToolbar={{
           left: `prev,next${isMobile ? '' : ' today'}`,
-          center: isMobile ? '' : 'title',
+          center: isMobile ? '' : 'addBooking',
           right: `${isMobile ? 'timeGridFourDay' : 'timeGridWeek'},timeGridDay` /* user can switch between the two */
         }}
         views={{
@@ -45,6 +64,14 @@ export default function Calendar() {
             type: 'timeGrid',
             duration: { days: 3 },
             buttonText: '3 day'
+          }
+        }}
+        customButtons={{
+          addBooking: {
+            text: 'Add Booking',
+            click: () => {
+              toggleModal()
+            }
           }
         }}
       />
