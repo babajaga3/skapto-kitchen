@@ -18,11 +18,11 @@ export const utcDateZod = z
     const dt = DateTime.fromISO(val, { zone: 'utc' })
     return dt.isValid && dt.toISO() === val
   }, {
-    message: 'Invalid UTC ISO 8601 date string'
+    message: 'Please select a valid date'
   })
 
 export const zCalendarEvent = z.strictObject({
-  id: z.string().length(15).regex(/^[a-z0-9]+$/), // Auto by pocketbase
+  // id: z.string().length(15).regex(/^[a-z0-9]+$/), // Auto by pocketbase
   kitchen: z.nativeEnum(SkaptoKitchens),
   studentName: z.string(),
   studentId: z.number().nonnegative().int(),
