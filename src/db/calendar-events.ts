@@ -1,5 +1,5 @@
 import { pb } from '@/lib/pocketbase'
-import { CalendarEvent } from '@/types/calendar-events'
+import { CalendarEvent, CollectionEntry } from '@/types/calendar-events'
 import { RecordModel } from 'pocketbase'
 
 
@@ -8,11 +8,11 @@ type CreateCalendarEvent = Omit<CalendarEvent, 'id' | 'created' | 'updated'>
 
 export class CalendarEvents {
   // Calendar collection var (less boilerplate)
-  private static readonly calendarCollection = pb.collection('calendar_events')
+  private static readonly calendarCollection = pb.collection<CollectionEntry>('calendar_events')
   
   // Get all events
-  public static async getAll(filter?: string): Promise<RecordModel[]> {
-    const data = await CalendarEvents.calendarCollection.getFullList({
+  public static async getAll(filter?: string): Promise<CollectionEntry[]> {
+    const data = await this.calendarCollection.getFullList({
       filter
     })
     
@@ -21,20 +21,20 @@ export class CalendarEvents {
   
   // Get one event
   public static async getOne(recordId: string) {
-    const data = await CalendarEvents.calendarCollection.getOne(recordId)
+    const data = await this.calendarCollection.getOne(recordId)
     
     return data
   }
   
   // Create an event
   public static async create(calendarEvent: CreateCalendarEvent) {
-    const data = await CalendarEvents.calendarCollection.create<CalendarEvent>(calendarEvent)
+    const data = await this.calendarCollection.create<CalendarEvent>(calendarEvent)
     
     return data
   }
   
   // Delete an event
   public static async delete(recordId: string) {
-    await CalendarEvents.calendarCollection.delete(recordId)
+    await this.calendarCollection.delete(recordId)
   }
 }
