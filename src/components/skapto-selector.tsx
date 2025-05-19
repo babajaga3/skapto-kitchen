@@ -42,7 +42,7 @@ export function SkaptoSelector() {
         <DropdownMenuLabel>Select your kitchen</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup
-          value={kitchen ?? undefined}
+          value={kitchen}
           onValueChange={value => setKitchen(value as SkaptoKitchens)}
         >
           {Object.entries(kitchens).map(([ key, value ]) => (
