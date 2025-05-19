@@ -41,6 +41,7 @@ import { CalendarEvents } from '@/db/calendar-events'
 import { BMDates, BMHours } from '@/lib/helpers'
 import { useMemo } from 'react'
 import Cookies from 'js-cookie'
+import { kitchens } from '@/types/skapto-kitchens'
 
 
 export function BookingModal() {
@@ -89,9 +90,8 @@ export function BookingModal() {
       studentName: 'Toma Bourov',
       studentId: 200274715,
       date: DateTime.now().startOf('day').toUTC().toISO(), // Use today as default
-      kitchen: defaultKitchen ?? SkaptoKitchens.SkaptoOne
+      kitchen: defaultKitchen as SkaptoKitchens ?? SkaptoKitchens.SkaptoOne
     }
-    // todo add default values if user selects directly in calendar
   })
 
   // On submit handler
@@ -148,14 +148,6 @@ export function BookingModal() {
   })
 
   const bookedHours = data?.bookedHours
-
-  // Kitchens todo make dynamic from db
-  const kitchens = {
-    'Skapto 1': SkaptoKitchens.SkaptoOne,
-    'Skapto 2 (card)': SkaptoKitchens.SkaptoTwoCard,
-    'Skapto 2 (key)': SkaptoKitchens.SkaptoTwoKey,
-    'Skapto 3': SkaptoKitchens.SkaptoThree
-  }
 
   // console.log(form.getValues())
 
