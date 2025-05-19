@@ -8,16 +8,17 @@ import interactionPlugin from '@fullcalendar/interaction'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { useQuery } from '@tanstack/react-query'
-import { DateTime } from 'luxon'
+import { useKitchen } from '@/hooks/use-kitchen'
 
 
 export default function Calendar() {
   const isMobile = useIsMobile()
+  const { kitchen } = useKitchen()
   const { toggleModal } = useBookingModal()
 
   const eventsQuery = useQuery({
-    queryKey: [ 'events', 'all' ], // TODO add skapto as identifier
-    queryFn: () => CalendarEvents.getAll(),
+    queryKey: [ 'events', 'all', kitchen ],
+    queryFn: () => CalendarEvents.getAll(`kitchen = '${kitchen}'`),
     select: data => data.map(event => {
       return {
         title: event.studentName,
@@ -45,7 +46,6 @@ export default function Calendar() {
           startTime: '09:00',
           endTime: '22:00'
         }}
-        // todo allow only a certain amount of time to be booked at once
         eventOverlap={false}
         slotMinTime={'09:00:00'}
         slotMaxTime={'22:00:00'}
