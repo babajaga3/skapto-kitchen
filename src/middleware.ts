@@ -5,7 +5,7 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const hasKitchen = request.cookies.get('main-kitchen')
 
-  // Router for unauthenticated below (future)
+  // TODO Router for unauthenticated below (future)
   // ...
 
   // Ensure user has set their default kitchen
@@ -21,5 +21,6 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // Everything except next & assets
   matcher: '/((?!_next/static|_next/image|favicon.ico).*)'
 }
