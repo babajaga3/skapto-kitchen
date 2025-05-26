@@ -26,7 +26,6 @@ import {
 import { useBookingModal } from '@/hooks/use-booking-modal'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
-import { CalendarEvent, SkaptoKitchens, utcDateZod } from '@/types/calendar-events'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
@@ -34,53 +33,20 @@ import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react'
 import { DateTime } from 'luxon'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command'
 // import { Input } from './ui/input'
 import { CalendarEvents } from '@/db/calendar-events'
 import { BMDates, BMHours } from '@/lib/helpers'
 import { kitchens } from '@/types/skapto-kitchens'
 import { useKitchen } from '@/hooks/use-kitchen'
+import { FormSchema, zFormSchema, EventPayload } from '@/types/forms/booking-modal'
 
-
-type EventPayload = Omit<CalendarEvent, 'id' | 'created' | 'updated'>
 
 export function BookingModal() {
   const { open, openMobile, toggleModal } = useBookingModal()
   const isMobile = useIsMobile()
   const queryClient = useQueryClient()
   const { getKitchen } = useKitchen()
-
-  // Form Schema
-  const zFormSchema = z.strictObject({
-    studentName: z.string().min(1),
-    studentId: z
-      .number()
-      .nonnegative()
-      .int()
-      .min(99999999, { message: 'Your ID is 9 digits.' })
-      .max(999999999, { message: 'Your ID is 9 digits.' }),
-    date: utcDateZod,
-    start: z.number().int().min(9).max(20),
-    end: z.number().int().min(10).max(22),
-    kitchen: z.nativeEnum(SkaptoKitchens)
-  })
-    .refine(
-      data => data.end >= data.start,
-      {
-        message: 'Ending time cannot be before starting time',
-        path: [ 'end' ]
-      }
-    )
-    .refine( // Programmable later
-      data => data.end <= data.start + 2,
-      {
-        message: 'Ending time must be within 2 hours after starting',
-        path: [ 'end' ]
-      }
-    )
-
-  type FormSchema = z.infer<typeof zFormSchema>
 
   // Define form
   const form = useForm<FormSchema>({
@@ -134,6 +100,7 @@ export function BookingModal() {
   // Construct filter
   const filter = `start >= "${startOfDate}" && end <= "${endOfDate}" && kitchen = "${form.watch('kitchen')}"`
 
+  // Fetch current events
   const { data } = useQuery({
     queryKey: [ 'events', 'all', startOfDate, form.watch('kitchen') ],
     queryFn: () => CalendarEvents.getAll(filter),
@@ -147,8 +114,6 @@ export function BookingModal() {
   })
 
   const bookedHours = data?.bookedHours
-
-  // console.log(form.getValues())
 
   return (
     <Dialog open={open || openMobile} onOpenChange={toggleModal}>
