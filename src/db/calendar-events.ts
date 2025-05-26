@@ -1,6 +1,5 @@
 import { pb } from '@/lib/pocketbase'
 import { CalendarEvent, CollectionEntry } from '@/types/calendar-events'
-import { RecordModel } from 'pocketbase'
 
 
 // Type for creating calendar event record
