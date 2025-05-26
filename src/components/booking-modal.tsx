@@ -49,7 +49,7 @@ export function BookingModal() {
   const { open, openMobile, toggleModal } = useBookingModal()
   const isMobile = useIsMobile()
   const queryClient = useQueryClient()
-  const { kitchen } = useKitchen()
+  const { getKitchen } = useKitchen()
 
   // Form Schema
   const zFormSchema = z.strictObject({
@@ -89,7 +89,7 @@ export function BookingModal() {
       studentName: 'Toma Bourov',
       studentId: 200274715,
       date: DateTime.now().startOf('day').toUTC().toISO(), // Use today as default
-      kitchen
+      kitchen: getKitchen()
     }
   })
 
