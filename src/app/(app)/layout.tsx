@@ -5,6 +5,8 @@ import { KitchenProvider } from '@/providers/kitchen-provider'
 
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+
+  // Have all custom providers here
   return (
     <BookingModalProvider>
       <KitchenProvider>

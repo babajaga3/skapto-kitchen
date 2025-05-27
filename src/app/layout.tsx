@@ -32,6 +32,9 @@ export default function RootLayout({
       <body
         className={`${robotoSlab.variable} ${openSans.variable} antialiased bg-background`}
       >
+
+        {/* All NPM package providers here*/}
+
         <TanstackQueryProvider>
           {children}
           <Toaster />
