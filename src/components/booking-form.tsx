@@ -17,6 +17,7 @@ import { EventPayload, FormSchema, zFormSchema } from '@/types/forms/booking-mod
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarEvents } from '@/db/calendar-events'
 import { toast } from 'sonner'
+import { Spinner } from '@/components/spinner'
 
 
 export function BookingForm() {
@@ -457,7 +458,13 @@ export function BookingForm() {
 
         {/* Submit button */}
 
-        <Button className={'w-full'} type="submit">Submit</Button>
+        <Button
+          className={'w-full'}
+          type="submit"
+          disabled={mutation.isPending}
+        >
+          {!mutation.isPending ? 'Submit' : <Spinner />}
+        </Button>
       </form>
     </Form>
   )
