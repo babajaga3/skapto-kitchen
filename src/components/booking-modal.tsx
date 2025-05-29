@@ -28,7 +28,6 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { format } from 'date-fns'
 import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react'
 import { DateTime } from 'luxon'
 import { useForm } from 'react-hook-form'
@@ -96,6 +95,7 @@ export function BookingModal() {
 
   // Use appropriate dates for filter
   const { startOfDate, endOfDate } = BMDates.constructTimeRangeOfDate(form.watch('date'))
+  const { startOfDate, endOfDate } = BMDates.constructTimeRangeOfDate(form.watch('date') ?? DateTime.now().startOf('day').toUTC().toISO()) // todo check
 
   // Construct filter
   const filter = `start >= "${startOfDate}" && end <= "${endOfDate}" && kitchen = "${form.watch('kitchen')}"`
