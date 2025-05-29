@@ -12,7 +12,7 @@ export const zFormSchema = z.strictObject({
     .min(99999999, { message: 'Your ID is 9 digits.' })
     .max(999999999, { message: 'Your ID is 9 digits.' }),
   date: utcDateZod,
-  start: z.number().int().min(9).max(20),
+  start: z.number().int().min(9).max(21),
   end: z.number().int().min(10).max(22),
   kitchen: z.nativeEnum(SkaptoKitchens)
 })
