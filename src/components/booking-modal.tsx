@@ -95,7 +95,6 @@ export function BookingModal() {
 
   // Use appropriate dates for filter
   const { startOfDate, endOfDate } = BMDates.constructTimeRangeOfDate(form.watch('date'))
-  const { startOfDate, endOfDate } = BMDates.constructTimeRangeOfDate(form.watch('date') ?? DateTime.now().startOf('day').toUTC().toISO()) // todo check
 
   // Construct filter
   const filter = `start >= "${startOfDate}" && end <= "${endOfDate}" && kitchen = "${form.watch('kitchen')}"`
@@ -116,7 +115,7 @@ export function BookingModal() {
   const bookedHours = data?.bookedHours
 
   return (
-    <Dialog open={open || openMobile} onOpenChange={toggleModal}>
+    <Dialog open={isMobile ? openMobile : open} onOpenChange={toggleModal}>
       <DialogContent>
 
         {/* Header */}
@@ -259,7 +258,7 @@ export function BookingModal() {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Date of booking</FormLabel>
-                  <Popover>
+                  <Popover modal>
 
                     {/* Trigger */}
 
@@ -273,7 +272,9 @@ export function BookingModal() {
                           )}
                         >
                           {field.value ? (
-                            format(field.value, 'PPP') // todo Use luxon here later
+                            DateTime
+                              .fromISO(field.value)
+                              .toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)
                           ) : (
                             <span>Pick a date</span>
                           )}
