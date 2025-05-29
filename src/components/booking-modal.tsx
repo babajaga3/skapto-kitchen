@@ -260,6 +260,9 @@ export function BookingModal() {
                 <FormItem className="flex flex-col">
                   <FormLabel>Date of booking</FormLabel>
                   <Popover>
+
+                    {/* Trigger */}
+
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -278,6 +281,9 @@ export function BookingModal() {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
+
+                    {/* Calendar content */}
+
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
@@ -474,6 +480,8 @@ export function BookingModal() {
 
               </div>
             ) : (
+              // Kitchen is fully booked
+
               <div className='text-base font-semibold px-4'>
                 Sorry, this kitchen is fully booked today.
                 Try again later, or check the others for availability :)
