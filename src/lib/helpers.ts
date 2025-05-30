@@ -63,7 +63,7 @@ export class BMHours {
 
   // Hours available
   public static isKitchenAvailable(bookedHours?: Set<number>) {
-    const startHourArray = this.getAvailableStartHours(bookedHours)
+    const startHourArray = BMHours.getAvailableStartHours(bookedHours)
 
     return startHourArray.length > 0
   }
@@ -86,9 +86,9 @@ export class BMHours {
 
   // Filter the starting hours
   public static getAvailableStartHours(bookedHours?: Set<number>) {
-    if (!bookedHours) return this.initStartHourArray
+    if (!bookedHours) return BMHours.initStartHourArray
 
-    return this.initStartHourArray.filter(hour => {
+    return BMHours.initStartHourArray.filter(hour => {
       return !bookedHours?.has(hour) // Return those that are not in the booked array
     })
   }
@@ -98,7 +98,7 @@ export class BMHours {
     if (selectedStart === undefined) return []
 
     // Valid end times are between (start + 1) and (start + 2), inclusive
-    const possibleEndHours = this.initEndHourArray.filter(hour => hour > selectedStart && hour <= selectedStart + 2)
+    const possibleEndHours = BMHours.initEndHourArray.filter(hour => hour > selectedStart && hour <= selectedStart + 2)
 
     return possibleEndHours.filter(endHour => {
       // We want ALL hours from selectedStart to endHour - 1 to be free
