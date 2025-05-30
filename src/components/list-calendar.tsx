@@ -19,6 +19,7 @@ export function ListCalendar() {
   * TODO:
   *  - Maintain filters after changing kitchen
   *  - Maintain filters after clicking off page (don't maintain for reloading the page)
+  *  - Set 'my bookings' as default
   * */
 
   // Filters for the query
