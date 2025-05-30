@@ -65,6 +65,7 @@
     "bundled-eslint-config": "^0.5.19",
     "eslint": "^9.26.0",
     "jiti": "^2.4.2",
+    "pocketbase-typegen": "^1.3.1",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.2.9",
     "typescript": "^5"
