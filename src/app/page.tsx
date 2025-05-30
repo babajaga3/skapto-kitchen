@@ -23,6 +23,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import Cookies from 'js-cookie'
+import { Spinner } from '@/components/spinner'
 
 
 export default function Home() {
@@ -77,8 +78,12 @@ export default function Home() {
             )}
           />
 
-          <Button className='mt-8 w-full' type="submit">
-            Next
+          <Button
+            className='mt-8 w-full'
+            type="submit"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? <Spinner /> : 'Next'}
           </Button>
         </form>
       </Form>
