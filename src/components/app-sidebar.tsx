@@ -13,18 +13,25 @@ import {
   SidebarMenuItem,
   useSidebar
 } from '@/components/ui/sidebar'
-import { Calendar, KeyRound, Settings, User } from 'lucide-react'
-import Link from 'next/link'
+import { Calendar, Settings, User } from 'lucide-react'
 import { SkaptoSelector } from './skapto-selector'
 import { Button } from './ui/button'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from './ui/drawer'
 import { UserMenu } from './user-menu'
+import { useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 
 
 export function AppSidebar() {
   // TODO add sections for RAs and directors (aka roles)
 
+  const router = useRouter()
   const { open, isMobile, openMobile, setOpenMobile } = useSidebar()
+
+  const handleNavigation = useCallback((href: string, mobile: boolean = isMobile) => {
+    if (mobile) setOpenMobile(false) // Close the mobile drawer if open on mobile
+    router.push(href)
+  }, [ router, setOpenMobile, isMobile ])
 
 
   if (isMobile) {
@@ -38,20 +45,14 @@ export function AppSidebar() {
           <span className="self-center border-b-2 w-11/12" />
           <DrawerFooter>
             <h4 className='text-sm font-semibold mt-2'>Kitchen</h4>
-            <Button asChild variant='outline'>
-              <Link href='/dashboard'>
-                <Calendar /> Schedule
-              </Link>
+            <Button variant='outline' onClick={() => handleNavigation('/dashboard')}>
+              <Calendar /> Schedule
             </Button>
-            <Button asChild variant='outline'>
-              <Link href='/dashboard/bookings'>
-                <User /> My bookings
-              </Link>
+            <Button variant='outline' onClick={() => handleNavigation('/dashboard/bookings')}>
+              <User /> My bookings
             </Button>
-            <Button asChild variant='outline'>
-              <Link href='/dashboard/settings'>
-                <Settings /> Settings
-              </Link>
+            <Button variant='outline' onClick={() => handleNavigation('/dashboard/settings')}>
+              <Settings /> Settings
             </Button>
 
             {/* <h4 className='text-sm font-semibold mt-2'>RA</h4>
@@ -82,20 +83,16 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href={'/dashboard'}>
-                    <Calendar />
-                    <span>Schedule</span>
-                  </Link>
+                <SidebarMenuButton onClick={() => handleNavigation('/dashboard')}>
+                  <Calendar />
+                  <span>Schedule</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href={'/dashboard/bookings'}>
-                    <User />
-                    <span>My bookings</span>
-                  </Link>
+                <SidebarMenuButton onClick={() => handleNavigation('/dashboard/bookings')}>
+                  <User />
+                  <span>My bookings</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -107,11 +104,9 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href={'/dashboard/settings'}>
-                    <Settings />
-                    <span>Settings</span>
-                  </Link>
+                <SidebarMenuButton onClick={() => handleNavigation('/dashboard/settings')}>
+                  <Settings />
+                  <span>Settings</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
