@@ -41,17 +41,19 @@ export default function Home() {
   })
 
   function onSubmit(values: FormSchema) {
-    try {
-      Cookies.set('main-kitchen', values.kitchen) // on device basis for now
-      toast('Sucessfully set your kitchen. Enjoy!') // nice message
-      redirect('/dashboard') // redirect user to the main dashboard page
-    } catch (error) {
-      console.error('Error setting kitchen:', error) // todo better error handling
-      toast.error('There was an error setting your preferred kitchen. Skapto 1 will be used as a default, you may'
-        + ' change it later.') // show error message
-      Cookies.set('main-kitchen', SkaptoKitchens.SkaptoOne) // set default kitchen in case of error
-      redirect('/dashboard') // redirect user to the main dashboard page
-    }
+    // TODO handle errors properly should they occur, though unlikely
+
+    // try {
+    Cookies.set('main-kitchen', values.kitchen) // on device basis for now
+    toast('Sucessfully set your kitchen. Enjoy!') // nice message
+    redirect('/dashboard') // redirect user to the main dashboard page
+    // } catch (error) {
+    //   console.error('Error setting kitchen:', error)
+    //   toast.error('There was an error setting your preferred kitchen. Skapto 1 will be used as a default, you may'
+    //     + ' change it later.') // show error message
+    //   Cookies.set('main-kitchen', SkaptoKitchens.SkaptoOne) // set default kitchen in case of error
+    //   redirect('/dashboard') // redirect user to the main dashboard page
+    // }
   }
 
   return (
