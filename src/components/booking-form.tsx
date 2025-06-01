@@ -26,7 +26,7 @@ export function BookingForm() {
   const { toggleModal } = useBookingModal()
   const isMobile = useIsMobile()
   const queryClient = useQueryClient()
-  const { getKitchen } = useKitchen()
+  const { kitchenName, getKitchen } = useKitchen()
 
   // Define form
   const form = useForm<FormSchema>({
@@ -119,7 +119,7 @@ export function BookingForm() {
                       )}
                     >
                       {field.value
-                        ? Object.entries(kitchens).find(([ _, value ]) => value === field.value)?.[0]
+                        ? kitchenName
                         : 'Select kitchen'}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>

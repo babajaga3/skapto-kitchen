@@ -21,13 +21,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const isMobile = useIsMobile()
   const { toggleSidebar } = useSidebar()
   const { toggleModal } = useBookingModal()
-  const { kitchen } = useKitchen()
+  const { kitchen, kitchenName } = useKitchen()
 
   const refetchBookings = useCallback(async () => {
     await queryClient.refetchQueries({
       queryKey: [ 'events', 'all', kitchen ]
     })
-    toast.info(`Fetched the latest bookings for ${Object.entries(kitchens).find(([ _key, value ]) => value === kitchen)?.[0]} kitchen`)
+    toast.info(`Fetched the latest bookings for ${kitchenName} kitchen`)
   }, [ queryClient, kitchen ])
 
   const reloadButtonAllowedPaths = useMemo(() => [ '/dashboard', '/dashboard/bookings' ], [])

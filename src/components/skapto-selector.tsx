@@ -17,7 +17,7 @@ import { useKitchen } from '@/hooks/use-kitchen'
 
 
 export function SkaptoSelector() {
-  const { kitchen, setKitchen } = useKitchen()
+  const { kitchen, kitchenName, setKitchen } = useKitchen()
 
 
   return (
@@ -31,7 +31,7 @@ export function SkaptoSelector() {
                 Current Kitchen
               </span>
               <span className="text-muted-foreground group-hover/button:text-muted-foreground-hover">
-                {Object.entries(kitchens).find(([ _key, value ]) => value === kitchen)?.[0]}
+                {kitchenName}
               </span>
             </div>
           </div>
