@@ -8,6 +8,7 @@ import { useKitchen } from '@/hooks/use-kitchen'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useCallback, useMemo, useState } from 'react'
 import { PBFilters } from '@/lib/pocketbase'
+import { QueryStateWrapper } from '@/components/query-state-wrapper'
 
 
 export function ListCalendar() {
@@ -53,27 +54,29 @@ export function ListCalendar() {
 
   return (
     <div className='h-full w-full overflow-auto'>
-      <FullCalendar
-        events={eventsQuery?.data}
-        plugins={[ listPlugin ]}
-        initialView='listWeek'
-        height={'100%'}
-        headerToolbar={{
-          left: isMobile ? 'mine all' : 'title',
-          center: !isMobile ? 'mine all' : '',
-          right: `${isMobile ? '' : 'today '}prev,next`
-        }}
-        customButtons={{ // todo figure out better name
-          all: {
-            text: 'All bookings',
-            click: () => filterBookings(null)
-          },
-          mine: {
-            text: 'My bookings',
-            click: () => filterBookings(200274715) // todo hardcoded for now, should be dynamic
-          }
-        }}
-      />
+      <QueryStateWrapper query={eventsQuery}>
+        <FullCalendar
+          events={eventsQuery?.data}
+          plugins={[ listPlugin ]}
+          initialView='listWeek'
+          height={'100%'}
+          headerToolbar={{
+            left: isMobile ? 'mine all' : 'title',
+            center: !isMobile ? 'mine all' : '',
+            right: `${isMobile ? '' : 'today '}prev,next`
+          }}
+          customButtons={{
+            all: {
+              text: 'All bookings',
+              click: () => filterBookings(null)
+            },
+            mine: {
+              text: 'My bookings',
+              click: () => filterBookings(200274715) // todo hardcoded for now, should be dynamic
+            }
+          }}
+        />
+      </QueryStateWrapper>
     </div>
   )
 }
