@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
-import { pb } from '@/lib/pocketbase'
+import { CalendarEvents } from '@/db/calendar-events'
+
 
 // todo sort of beta
 async function checkDatabase() {
   try {
-    const data = await pb.collection('calendar_events').getFullList()
+    const data = await CalendarEvents.getAll()
 
     return !!data
   } catch {
