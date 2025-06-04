@@ -8,8 +8,9 @@
     "lint": "next lint",
     "start": "next start",
     "pages:build": "bunx @cloudflare/next-on-pages",
-    "preview": "bun run pages:build && wrangler pages dev",
-    "deploy": "bun run pages:build && wrangler pages deploy"
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.17",
