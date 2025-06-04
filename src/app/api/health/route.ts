@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { CalendarEvents } from '@/db/calendar-events'
+import axios from 'axios'
 
 
 // todo sort of beta
@@ -15,13 +16,17 @@ async function checkDatabase() {
 
 async function checkExternalApi() {
   try {
-    const res = await fetch(process.env.EXTERNAL_API_CHECK ?? 'https://www.cloudflare.com/cdn-cgi/trace', {
+    const res = await axios.get(process.env.EXTERNAL_API_CHECK ?? 'https://www.cloudflare.com/cdn-cgi/trace', {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      },
       method: 'HEAD',
-      cache: 'no-store',
       signal: AbortSignal.timeout(2000)
     })
 
-    return res.ok
+    return res.status === 200
   } catch {
     return false
   }
