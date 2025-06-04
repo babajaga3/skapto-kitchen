@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Open_Sans, Roboto_Slab } from 'next/font/google'
 import './globals.css'
 import TanstackQueryProvider from '@/providers/tanstack-query'
+import StatusBanner from '@/components/status-banner'
 
 
 const robotoSlab = Roboto_Slab({
@@ -32,8 +33,9 @@ export default function RootLayout({
       <body
         className={`${robotoSlab.variable} ${openSans.variable} antialiased bg-background`}
       >
+        <StatusBanner />
 
-        {/* All NPM package providers here*/}
+        {/* All NPM package providers here */}
 
         <TanstackQueryProvider>
           {children}
