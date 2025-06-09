@@ -41,8 +41,8 @@ export default function NetworkStatusBanner() {
             + ' flex items-center justify-items-stretch gap-2')}
         >
           <Button
-            variant={'ghost'}
-            className={'ml-2 hover:bg-accent-foreground'}
+            variant={'destructive'}
+            className={'ml-2'}
             onClick={() => setShouldShow(false)}
           >
             <X />
