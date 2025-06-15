@@ -62,7 +62,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/js-cookie": "^3.0.6",
     "@types/luxon": "^3.6.2",
-    "@types/node": "^20",
+    "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "bundled-eslint-config": "^0.5.19",
