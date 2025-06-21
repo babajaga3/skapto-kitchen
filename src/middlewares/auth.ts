@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import PocketBase from 'pocketbase'
 
-
-const POCKETBASE_URL = process.env.POCKETBASE_URL
 
 const PUBLIC_PATHS = new Set([
   '/',
@@ -14,18 +11,17 @@ const PUBLIC_PATHS = new Set([
 ])
 
 export async function auth(request: NextRequest): Promise<NextResponse> {
-
   const requestUrl = request.nextUrl.clone()
   const pathname = requestUrl.pathname
   const token = request.cookies.get('pb_auth')?.value ?? ''
 
-  const pb = new PocketBase(POCKETBASE_URL)
+  const pb = new PocketBase('https://skapto-pb.thec0derhere.me')
 
   let isAuthenticated = false
 
   if (token) {
     try {
-      pb.authStore.loadFromCookie(document.cookie)
+      pb.authStore.loadFromCookie(token)
       await pb.collection('users').authRefresh()
       isAuthenticated = pb.authStore.isValid
     } catch {
