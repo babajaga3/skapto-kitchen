@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { CalendarEvents } from '@/db/calendar-events'
-import axios from 'axios'
+import xior from 'xior'
 
 
 // todo sort of beta
@@ -16,7 +16,7 @@ async function checkDatabase() {
 
 async function checkExternalApi() {
   try {
-    const res = await axios.get(process.env.EXTERNAL_API_CHECK ?? 'https://www.cloudflare.com/cdn-cgi/trace', {
+    const res = await xior.get(process.env.EXTERNAL_API_CHECK ?? 'https://www.cloudflare.com/cdn-cgi/trace', {
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
