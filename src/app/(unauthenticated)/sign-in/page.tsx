@@ -1,58 +1,45 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 import griffon from '../../../../public/grifon-blue.svg'
+import { SignInFormSchema, zSignInFormSchema } from '@/types/forms/sign-in'
+import { useMutation } from '@tanstack/react-query'
+import { redirect, useRouter } from 'next/navigation'
+import { login } from '@/api'
 
-
-const FormSchema = z.object({
-  username: z.string().min(6, {
-    message: 'Username must be at least 6 characters.'
-  }),
-  password: z.string().min(1, {
-    message: 'Password is required.'
-  })
-})
 
 export default function SignInPage() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const router = useRouter()
+  const form = useForm<SignInFormSchema>({
+    resolver: zodResolver(zSignInFormSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: ''
     }
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast('You submitted the following values:', {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      )
-    })
+  const mutation = useMutation({
+    mutationKey: [ 'user', 'login' ],
+    mutationFn: async (data: SignInFormSchema) => await login(data.email, data.password),
+    onSuccess: () => {
+      toast.success('Successfully signed in! Redirecting to the dashboard...')
+      router.push('/dashboard') // redirect to the dashboard after successful login
+    },
+    onError: error => {
+      toast.error('There was an error signing you in. Please check your credentials and try again.')
+      console.error(error)
+    }
+  })
+
+  async function onSubmit(data: SignInFormSchema) {
+    mutation.mutate(data)
   }
 
   return (
@@ -74,7 +61,7 @@ export default function SignInPage() {
             <CardContent className="space-y-4">
               <FormField
                 control={form.control}
-                name="username"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Username</FormLabel>
