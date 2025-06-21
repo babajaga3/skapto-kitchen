@@ -1,23 +1,16 @@
-import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { auth } from '@/middlewares/auth'
+import { defaultKitchen } from '@/middlewares/kitchen'
+import { composeMiddleware } from '@/middlewares'
 
 
 export function middleware(request: NextRequest) {
-  const hasKitchen = request.cookies.get('main-kitchen')
+  const chain = composeMiddleware([
+    auth,
+    defaultKitchen,
+  ])
 
-  // TODO Router for unauthenticated below (future)
-  // ...
-
-  // Ensure user has set their default kitchen
-  if (!hasKitchen && request.nextUrl.pathname !== '/') {
-    return NextResponse.redirect(new URL('/', request.url))
-  }
-
-  if (hasKitchen && request.nextUrl.pathname === '/') {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
-  }
-
-  return NextResponse.next()
+  return chain(request)
 }
 
 export const config = {
