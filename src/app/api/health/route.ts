@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { CalendarEvents } from '@/db/calendar-events'
 import xior from 'xior'
+import { ok, raw } from '@/lib/api'
 
 
 // todo sort of beta
@@ -39,13 +40,13 @@ export async function GET() {
   ])
 
   const healthy = dbOk && apiOk
+  const resData = { healthy, dbOk, apiOk, timestamp: Date.now() }
 
   if (!healthy) {
-    console.warn('Health check failed', { dbOk, apiOk })
+    return raw(JSON.stringify({ data: resData }), {
+      status: 503
+    })
   }
 
-  return NextResponse.json(
-    { healthy, dbOk, apiOk, timestamp: Date.now() },
-    { status: healthy ? 200 : 503 }
-  )
+  return ok(resData)
 }
