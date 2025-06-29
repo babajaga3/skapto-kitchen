@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { redirect } from 'next/navigation'
 
 
 export async function POST() {
@@ -11,6 +10,4 @@ export async function POST() {
     path: '/',
     expires: new Date(0) // immediately expires the cookie
   })
-
-  redirect('/sign-in')
 }
