@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import PocketBase from 'pocketbase'
+import { verifyUser } from '@/lib/utils'
 
 
 const PUBLIC_PATHS = new Set([
@@ -15,19 +16,7 @@ export async function auth(request: NextRequest): Promise<NextResponse> {
   const pathname = requestUrl.pathname
   const token = request.cookies.get('pb_auth')?.value ?? ''
 
-  const pb = new PocketBase('https://skapto-pb.thec0derhere.me')
-
-  let isAuthenticated = false
-
-  if (token) {
-    try {
-      pb.authStore.loadFromCookie(token)
-      await pb.collection('users').authRefresh()
-      isAuthenticated = pb.authStore.isValid
-    } catch {
-      pb.authStore.clear()
-    }
-  }
+  const { isAuthenticated } = await verifyUser(token)
 
   const isPublicPath = PUBLIC_PATHS.has(pathname)
 
