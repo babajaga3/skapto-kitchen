@@ -11,7 +11,6 @@ import { useCallback, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useKitchen } from '@/hooks/use-kitchen'
 import { toast } from 'sonner'
-import { kitchens } from '@/types/skapto-kitchens'
 import { usePathname } from 'next/navigation'
 
 
