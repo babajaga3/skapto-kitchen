@@ -1,19 +1,30 @@
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ChevronsUpDown, LogOut } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useMutation } from '@tanstack/react-query'
+import { logout } from '@/api'
+import { useUser } from '@/hooks/use-user'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 
 export function UserMenu({
   isMobile,
   sidebarOpen
 }: { isMobile?: boolean; sidebarOpen?: boolean }) {
+  const { data } = useUser()
+  const router = useRouter()
+
+  const { mutate } = useMutation({
+    mutationKey: [ 'logout' ],
+    mutationFn: logout,
+    onSuccess: () => {
+      toast.success('Logged out successfully, redirecting to login page...')
+      router.push('/sign-in')
+    }
+  })
 
   if (isMobile) {
     return (
@@ -22,16 +33,16 @@ export function UserMenu({
           <Button variant="ghost">
             <div className={'flex flex-row-reverse items-center gap-2'}>
               <Avatar>
-                <AvatarImage src='https://avatars.githubusercontent.com/u/63297306' />
-                <AvatarFallback>TB</AvatarFallback>
+                <AvatarImage src={data?.avatar} />
+                <AvatarFallback>{data?.name.at(0)}</AvatarFallback>
               </Avatar>
-              <h3 className=''>Toma Bourov</h3>
+              <h3 className=''>{data?.name}</h3>
             </div>
             <ChevronsUpDown className={'hidden'} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-(--radix-popper-anchor-width)">
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => mutate()}>
             <LogOut /> Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -52,8 +63,8 @@ export function UserMenu({
             asChild
           >
             <motion.div layoutId="user-avatar">
-              <AvatarImage src="https://avatars.githubusercontent.com/u/63297306" />
-              <AvatarFallback>TB</AvatarFallback>
+              <AvatarImage src={data?.avatar} />
+              <AvatarFallback>{data?.name.at(0)}</AvatarFallback>
             </motion.div>
           </Avatar>
 
@@ -68,10 +79,10 @@ export function UserMenu({
                 className="ml-2 flex flex-col items-start"
               >
                 <h3 className="font-semibold dark:text-primary-foreground">
-                  Toma Bourov
+                  {data?.name}
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  tnb241@aubg.edu
+                  {data?.email}
                 </p>
               </motion.div>
             )}
@@ -92,7 +103,7 @@ export function UserMenu({
         </motion.div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-(--radix-popper-anchor-width)">
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => mutate()}>
           <LogOut /> Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
