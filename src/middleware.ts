@@ -14,6 +14,7 @@ export function middleware(request: NextRequest) {
 }
 
 // todo add a more sophisticated matcher
+// https://nextjs.org/docs/app/api-reference/file-conventions/middleware#matcher
 export const config = {
   matcher: [ '/((?!api|_next/static|_next/image|.*\\.png$).*)' ]
 }
