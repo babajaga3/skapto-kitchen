@@ -46,8 +46,6 @@ export function BookingModal() {
           </DialogDescription>
         </DialogHeader>
 
-        {/* Form here soon */}
-
         <BookingForm />
 
       </DialogContent>
