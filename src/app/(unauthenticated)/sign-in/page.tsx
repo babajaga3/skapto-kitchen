@@ -30,10 +30,13 @@ export default function SignInPage() {
     mutationFn: async (data: SignInFormSchema) => await login(data.email, data.password),
     onSuccess: () => {
       toast.success('Successfully signed in! Redirecting to the dashboard...')
-      console.log('before redirect')
+      /**
+       * This is a workaround fix, apparently the router.push() does not work properly on prod
+       *
+       * https://github.com/vercel/next.js/discussions/51782
+       */
       router.refresh() // redirect to the dashboard after successful login
-      router.replace('/dashboard')
-      console.log('after redirect')
+      router.push('/sign-in')
     },
     onError: error => {
       toast.error('There was an error signing you in. Please check your credentials and try again.')
