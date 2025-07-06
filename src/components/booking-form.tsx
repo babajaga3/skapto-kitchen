@@ -18,6 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarEvents } from '@/db/calendar-events'
 import { toast } from 'sonner'
 import { Spinner } from '@/components/spinner'
+import { useUser } from '@/hooks/use-user'
 
 
 export function BookingForm() {
@@ -27,13 +28,14 @@ export function BookingForm() {
   const isMobile = useIsMobile()
   const queryClient = useQueryClient()
   const { kitchenName, getKitchen } = useKitchen()
+  const { data: user } = useUser()
 
   // Define form
   const form = useForm<FormSchema>({
     resolver: zodResolver(zFormSchema),
     defaultValues: {
-      studentName: 'Toma Bourov', // Mock data
-      studentId: 200274715, // Mock data
+      studentName: user?.name,
+      studentId: user?.studentId,
       date: DateTime.now().startOf('day').toUTC().toISO(), // Use today as default
       kitchen: getKitchen()
     }
