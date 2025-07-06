@@ -30,7 +30,10 @@ export default function SignInPage() {
     mutationFn: async (data: SignInFormSchema) => await login(data.email, data.password),
     onSuccess: () => {
       toast.success('Successfully signed in! Redirecting to the dashboard...')
-      router.replace('/dashboard') // redirect to the dashboard afjter successful login
+      console.log('before redirect')
+      router.refresh() // redirect to the dashboard after successful login
+      router.replace('/dashboard')
+      console.log('after redirect')
     },
     onError: error => {
       toast.error('There was an error signing you in. Please check your credentials and try again.')
