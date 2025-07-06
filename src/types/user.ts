@@ -14,6 +14,7 @@ export const zUser = z.strictObject({
   emailVisibility: z.boolean(),
   verified: z.boolean(),
   name: z.string(),
+  studentId: z.number(),
   avatar: z.any(), // todo Fix later
   roles: z.nativeEnum(Roles),
   created: utcDateZod,
