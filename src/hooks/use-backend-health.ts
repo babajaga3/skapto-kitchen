@@ -22,7 +22,7 @@ export function useBackendHealth(interval = 10000) {
     const ping = async () => {
       try {
         const res = await fetch('/api/health', { cache: 'no-store' })
-        const data= await res.json()
+        const data = await res.json()
         setStatus(data.data) // todo fix, terrible typing
       } catch {
         setStatus({ healthy: false, dbOk: false, apiOk: false, timestamp: Date.now() })

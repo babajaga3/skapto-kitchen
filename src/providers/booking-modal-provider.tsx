@@ -30,7 +30,7 @@ export function BookingModalProvider({
   const isMobile = useIsMobile()
   const [ openMobile, setOpenMobile ] = React.useState(false)
 
-  // This is the internal state of the sidebar.
+  // This is the internal state of the modal.
   // We use openProp and setOpenProp for control from outside the component.
   const [ _open, _setOpen ] = React.useState(false)
   const open = openProp ?? _open
@@ -46,7 +46,7 @@ export function BookingModalProvider({
     [ setOpenProp, open ]
   )
 
-  // Helper to toggle the sidebar.
+  // Helper to toggle the modal.
   const toggleModal = React.useCallback(() => {
     return isMobile ? setOpenMobile(open => !open) : setOpen(open => !open)
   }, [ isMobile, setOpen, setOpenMobile ])
