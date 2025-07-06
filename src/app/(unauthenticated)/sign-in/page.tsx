@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 import griffon from '../../../../public/grifon-blue.svg'
 import { SignInFormSchema, zSignInFormSchema } from '@/types/forms/sign-in'
 import { useMutation } from '@tanstack/react-query'
-import { redirect, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { login } from '@/api'
 
 
@@ -30,7 +30,7 @@ export default function SignInPage() {
     mutationFn: async (data: SignInFormSchema) => await login(data.email, data.password),
     onSuccess: () => {
       toast.success('Successfully signed in! Redirecting to the dashboard...')
-      router.push('/dashboard') // redirect to the dashboard after successful login
+      router.replace('/dashboard') // redirect to the dashboard afjter successful login
     },
     onError: error => {
       toast.error('There was an error signing you in. Please check your credentials and try again.')
