@@ -3,7 +3,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ChevronsUpDown, LogOut } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { logout } from '@/api'
 import { useUser } from '@/hooks/use-user'
 import { useRouter } from 'next/navigation'
@@ -16,13 +16,16 @@ export function UserMenu({
 }: { isMobile?: boolean; sidebarOpen?: boolean }) {
   const { data } = useUser()
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   const { mutate } = useMutation({
     mutationKey: [ 'logout' ],
     mutationFn: logout,
-    onSuccess: () => {
+    onSuccess: async () => {
+      // Invalidate the 'self' query to remove user data from cache
       toast.success('Logged out successfully, redirecting to login page...')
       router.push('/sign-in')
+      await queryClient.invalidateQueries({ queryKey: [ 'self' ] })
     }
   })
 
