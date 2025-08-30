@@ -5,6 +5,8 @@ import { composeMiddleware } from '@/middlewares'
 
 
 export function middleware(request: NextRequest) {
+  console.info(`[middleware] ${request.method} ${request.url}`)
+
   const chain = composeMiddleware([
     auth,
     defaultKitchen
