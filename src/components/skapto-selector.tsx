@@ -11,13 +11,14 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { ChevronsUpDown, Microwave } from 'lucide-react'
-import { kitchens } from '@/types/skapto-kitchens'
+import { skaptos } from '@/types/skapto-kitchens'
 import { SkaptoKitchens } from '@/types/calendar-events'
-import { useKitchen } from '@/hooks/use-kitchen'
+import { useKitchen, useSetKitchen } from '@/stores'
 
 
 export function SkaptoSelector() {
-  const { kitchen, kitchenName, setKitchen } = useKitchen()
+  const kitchen = useKitchen()
+  const setKitchen = useSetKitchen()
 
 
   return (
@@ -31,7 +32,7 @@ export function SkaptoSelector() {
                 Current Kitchen
               </span>
               <span className="text-muted-foreground group-hover/button:text-muted-foreground-hover">
-                {kitchenName}
+                {skaptos[kitchen]}
               </span>
             </div>
           </div>
@@ -45,8 +46,8 @@ export function SkaptoSelector() {
           value={kitchen}
           onValueChange={value => setKitchen(value as SkaptoKitchens)}
         >
-          {Object.entries(kitchens).map(([ key, value ]) => (
-            <DropdownMenuRadioItem key={value} value={value}>{key}</DropdownMenuRadioItem>
+          {Object.entries(skaptos).map(([ key, value ]) => (
+            <DropdownMenuRadioItem key={key} value={key}>{value}</DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
