@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+
 type MiddlewareResponse = NextResponse | void
 
 type MiddlewareHandler = (req: NextRequest) => Promise<MiddlewareResponse> | MiddlewareResponse
