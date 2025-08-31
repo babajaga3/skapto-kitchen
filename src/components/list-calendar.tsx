@@ -4,16 +4,16 @@ import FullCalendar from '@fullcalendar/react'
 import listPlugin from '@fullcalendar/list'
 import { useQuery } from '@tanstack/react-query'
 import { CalendarEvents } from '@/db/calendar-events'
-import { useKitchen } from '@/hooks/use-kitchen'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useCallback, useMemo, useState } from 'react'
 import { PBFilters } from '@/lib/pocketbase'
 import { QueryStateWrapper } from '@/components/query-state-wrapper'
+import { useKitchen } from '@/stores'
 
 
 export function ListCalendar() {
   const isMobile = useIsMobile()
-  const { kitchen } = useKitchen()
+  const kitchen = useKitchen()
   const [ studentId, setStudentId ] = useState<number>()
 
   /*

@@ -5,12 +5,14 @@ import { composeMiddleware } from '@/middlewares'
 
 
 export function middleware(request: NextRequest) {
-  const chain = composeMiddleware([
+  console.info(`[middleware] ${request.method} ${request.url}`)
+
+  const middleware = composeMiddleware([
     auth,
     defaultKitchen
   ])
 
-  return chain(request)
+  return middleware(request)
 }
 
 // todo add a more sophisticated matcher

@@ -2,7 +2,6 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { kitchens } from '@/types/skapto-kitchens'
 import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { DateTime } from 'luxon'
@@ -11,7 +10,6 @@ import { BMDates, BMHours } from '@/lib/helpers'
 import { useBookingModal } from '@/hooks/use-booking-modal'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useKitchen } from '@/hooks/use-kitchen'
 import { useForm } from 'react-hook-form'
 import { EventPayload, FormSchema, zFormSchema } from '@/types/forms/booking-modal'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -19,6 +17,9 @@ import { CalendarEvents } from '@/db/calendar-events'
 import { toast } from 'sonner'
 import { Spinner } from '@/components/spinner'
 import { useUser } from '@/hooks/use-user'
+import { skaptos } from '@/types/skapto-kitchens'
+import { SkaptoKitchens } from '@/types/calendar-events'
+import { useKitchen } from '@/stores'
 
 
 export function BookingForm() {
@@ -27,7 +28,7 @@ export function BookingForm() {
   const { toggleModal } = useBookingModal()
   const isMobile = useIsMobile()
   const queryClient = useQueryClient()
-  const { kitchenName, getKitchen } = useKitchen()
+  const kitchen = useKitchen()
   const { data: user } = useUser()
 
   // Define form
@@ -37,7 +38,7 @@ export function BookingForm() {
       studentName: user?.name,
       studentId: user?.studentId,
       date: DateTime.now().startOf('day').toUTC().toISO(), // Use today as default
-      kitchen: getKitchen()
+      kitchen
     }
   })
 
@@ -121,7 +122,7 @@ export function BookingForm() {
                       )}
                     >
                       {field.value
-                        ? kitchenName
+                        ? skaptos[field.value]
                         : 'Select kitchen'}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -131,24 +132,25 @@ export function BookingForm() {
                   <Command>
                     <CommandList>
                       <CommandGroup>
-                        {Object.entries(kitchens).map(([ key, value ], index) => (
+                        {Object.entries(skaptos).map(([ key ]) => (
+                          // todo fix weird naming with key, make clearer
                           <CommandItem
-                            value={value}
-                            key={index}
+                            value={key}
+                            key={key}
                             onSelect={() => {
                               // Reset times when changing kitchen
                               form.resetField('start')
                               form.resetField('end')
 
                               // Set kitchen value
-                              form.setValue('kitchen', value)
+                              form.setValue('kitchen', key as SkaptoKitchens)
                             }}
                           >
-                            {key}
+                            {skaptos[key as keyof typeof skaptos]}
                             <Check
                               className={cn(
                                 'ml-auto',
-                                value === field.value
+                                key === field.value
                                   ? 'opacity-100'
                                   : 'opacity-0'
                               )}

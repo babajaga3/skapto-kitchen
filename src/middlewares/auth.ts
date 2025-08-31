@@ -1,35 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
-import PocketBase from 'pocketbase'
-import { verifyUser } from '@/lib/utils'
+import { db } from '@/db'
+import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies'
 
-
-const PUBLIC_PATHS = new Set([
-  '/',
-  '/sign-in',
-  '/sign-up',
-  '/forgot-password',
-  '/reset-password'
-])
 
 export async function auth(request: NextRequest): Promise<NextResponse> {
-  const requestUrl = request.nextUrl.clone()
-  const pathname = requestUrl.pathname
-  const token = request.cookies.get('pb_auth')?.value ?? ''
+  const isLoggedIn = await db.isAuthenticated(request.cookies as unknown as ReadonlyRequestCookies) // todo fix types
 
-  const { isAuthenticated } = await verifyUser(token)
+  if (request.nextUrl.pathname && request.nextUrl.pathname.startsWith('/auth')) {
+    if (isLoggedIn) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
 
-  const isPublicPath = PUBLIC_PATHS.has(pathname)
-
-  // Redirect unauthenticated users trying to access protected paths
-  if (!isAuthenticated && !isPublicPath) {
-    return NextResponse.redirect(new URL('/sign-in', requestUrl))
+    return NextResponse.next()
   }
 
-  // Redirect authenticated users trying to access public auth pages
-  if (isAuthenticated && isPublicPath) {
-    return NextResponse.redirect(new URL('/dashboard', requestUrl))
+  // handling other unprotected routes goes here
+
+  if (!isLoggedIn) {
+    return NextResponse.redirect(new URL('/auth/sign-in', request.url))
   }
 
-  // Otherwise allow the request to proceed
   return NextResponse.next()
 }

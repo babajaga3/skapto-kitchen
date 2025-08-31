@@ -8,13 +8,13 @@ import interactionPlugin from '@fullcalendar/interaction'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { useQuery } from '@tanstack/react-query'
-import { useKitchen } from '@/hooks/use-kitchen'
 import { QueryStateWrapper } from '@/components/query-state-wrapper'
+import { useKitchen } from '@/stores'
 
 
 export default function Calendar() {
   const isMobile = useIsMobile()
-  const { kitchen } = useKitchen()
+  const kitchen = useKitchen()
   const { toggleModal } = useBookingModal()
 
   const eventsQuery = useQuery({

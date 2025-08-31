@@ -8,23 +8,25 @@ import { logout } from '@/api'
 import { useUser } from '@/hooks/use-user'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { POCKET_BASE_URL } from '@/db'
 
 
 export function UserMenu({
   isMobile,
   sidebarOpen
 }: { isMobile?: boolean; sidebarOpen?: boolean }) {
-  const { data } = useUser()
+  const { data: user } = useUser()
   const router = useRouter()
   const queryClient = useQueryClient()
+
+  const userAvatar = `${POCKET_BASE_URL}/api/files/users/${user?.id}/${user?.avatar}`
 
   const { mutate } = useMutation({
     mutationKey: [ 'logout' ],
     mutationFn: logout,
     onSuccess: async () => {
-      // Invalidate the 'self' query to remove user data from cache
       toast.success('Logged out successfully, redirecting to login page...')
-      router.push('/sign-in')
+      router.push('/auth/sign-in')
       await queryClient.invalidateQueries({ queryKey: [ 'self' ] })
     }
   })
@@ -36,10 +38,10 @@ export function UserMenu({
           <Button variant="ghost">
             <div className={'flex flex-row-reverse items-center gap-2'}>
               <Avatar>
-                <AvatarImage src={data?.avatar} />
-                <AvatarFallback>{data?.name.at(0)}</AvatarFallback>
+                <AvatarImage src={userAvatar} />
+                <AvatarFallback>{user?.name.at(0)}</AvatarFallback>
               </Avatar>
-              <h3 className=''>{data?.name}</h3>
+              <h3 className=''>{user?.name}</h3>
             </div>
             <ChevronsUpDown className={'hidden'} />
           </Button>
@@ -66,8 +68,8 @@ export function UserMenu({
             asChild
           >
             <motion.div layoutId="user-avatar">
-              <AvatarImage src={data?.avatar} />
-              <AvatarFallback>{data?.name.at(0)}</AvatarFallback>
+              <AvatarImage src={userAvatar} />
+              <AvatarFallback>{user?.name.at(0)}</AvatarFallback>
             </motion.div>
           </Avatar>
 
@@ -82,10 +84,10 @@ export function UserMenu({
                 className="ml-2 flex flex-col items-start"
               >
                 <h3 className="font-semibold dark:text-primary-foreground">
-                  {data?.name}
+                  {user?.name}
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  {data?.email}
+                  {user?.email}
                 </p>
               </motion.div>
             )}

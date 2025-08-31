@@ -9,9 +9,10 @@ import { Menu, PanelLeft, RefreshCw } from 'lucide-react'
 import { useBookingModal } from '@/hooks/use-booking-modal'
 import { useCallback, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useKitchen } from '@/hooks/use-kitchen'
 import { toast } from 'sonner'
 import { usePathname } from 'next/navigation'
+import { useKitchen } from '@/stores'
+import { skaptos } from '@/types/skapto-kitchens'
 
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -20,13 +21,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const isMobile = useIsMobile()
   const { toggleSidebar } = useSidebar()
   const { toggleModal } = useBookingModal()
-  const { kitchen, kitchenName } = useKitchen()
+  const kitchen = useKitchen()
 
   const refetchBookings = useCallback(async () => {
     await queryClient.refetchQueries({
       queryKey: [ 'events', 'all', kitchen ]
     })
-    toast.info(`Fetched the latest bookings for ${kitchenName} kitchen`)
+    toast.info(`Fetched the latest bookings for ${skaptos[kitchen]} kitchen`)
   }, [ queryClient, kitchen ])
 
   const reloadButtonAllowedPaths = useMemo(() => [ '/dashboard', '/dashboard/bookings' ], [])
