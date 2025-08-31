@@ -7,14 +7,17 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { QueryStateWrapper } from '@/components/query-state-wrapper'
 import { useKitchen } from '@/stores'
+import { useEffect } from 'react'
+import { db } from '@/db'
 
 
 export default function Calendar() {
   const isMobile = useIsMobile()
   const kitchen = useKitchen()
+  const qc = useQueryClient()
   const { toggleModal } = useBookingModal()
 
   const eventsQuery = useQuery({
@@ -28,6 +31,16 @@ export default function Calendar() {
       }
     })
   })
+
+  useEffect(() => {
+    db.client.collection('calendar_events').subscribe('*', () => {
+      qc.invalidateQueries({ queryKey: [ 'events', 'all', kitchen ] })
+    })
+
+    return () => {
+      db.client.collection('calendar_events').unsubscribe('*')
+    }
+  }, [ qc, kitchen ])
 
   return (
     <div className='h-full w-full overflow-auto'>
