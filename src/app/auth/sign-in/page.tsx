@@ -36,7 +36,7 @@ export default function SignInPage() {
        * https://github.com/vercel/next.js/discussions/51782
        */
       router.refresh() // redirect to the dashboard after successful login
-      router.push('/auth/sign-in')
+      router.push('/dashboard')
     },
     onError: error => {
       toast.error('There was an error signing you in. Please check your credentials and try again.')
