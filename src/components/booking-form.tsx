@@ -20,6 +20,8 @@ import { useUser } from '@/hooks/use-user'
 import { skaptos } from '@/types/skapto-kitchens'
 import { SkaptoKitchens } from '@/types/calendar-events'
 import { useKitchen } from '@/stores'
+import { useEffect } from 'react'
+import { db } from '@/db'
 
 
 export function BookingForm() {
@@ -27,7 +29,7 @@ export function BookingForm() {
   // Hooks
   const { toggleModal } = useBookingModal()
   const isMobile = useIsMobile()
-  const queryClient = useQueryClient()
+  const qc = useQueryClient()
   const kitchen = useKitchen()
   const { data: user } = useUser()
 
@@ -58,7 +60,7 @@ export function BookingForm() {
     mutation.mutate(payload)
   }
 
-  // React query mutation
+  // Create event
   const mutation = useMutation({
     mutationKey: [ 'events', 'create', form.getValues().studentId ], // maybe change the unique identifier
     mutationFn: (values: EventPayload) => CalendarEvents.create(values),
@@ -73,7 +75,7 @@ export function BookingForm() {
     },
     onSettled: () => {
       form.reset()
-      queryClient.invalidateQueries()
+      qc.invalidateQueries()
     }
   })
 
@@ -85,7 +87,7 @@ export function BookingForm() {
 
   // Fetch current events
   const { data } = useQuery({
-    queryKey: [ 'events', 'all', startOfDate, form.watch('kitchen') ],
+    queryKey: [ 'events', 'all', form.watch('kitchen'), startOfDate ],
     queryFn: () => CalendarEvents.getAll(filter),
     enabled: !!form.watch('date'), // Call only if a date has been selected
     select: bookings => {
@@ -95,6 +97,16 @@ export function BookingForm() {
       }
     }
   })
+
+  useEffect(() => {
+    db.client.collection('calendar_events').subscribe('*', () => {
+      qc.invalidateQueries({ queryKey: [ 'events', 'all', kitchen ] })
+    })
+
+    return () => {
+      db.client.collection('calendar_events').unsubscribe('*')
+    }
+  }, [ qc, kitchen ])
 
   const bookedHours = data?.bookedHours
 

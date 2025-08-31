@@ -2,18 +2,20 @@
 
 import FullCalendar from '@fullcalendar/react'
 import listPlugin from '@fullcalendar/list'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { CalendarEvents } from '@/db/calendar-events'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PBFilters } from '@/lib/pocketbase'
 import { QueryStateWrapper } from '@/components/query-state-wrapper'
 import { useKitchen } from '@/stores'
+import { db } from '@/db'
 
 
 export function ListCalendar() {
   const isMobile = useIsMobile()
   const kitchen = useKitchen()
+  const qc = useQueryClient()
   const [ studentId, setStudentId ] = useState<number>()
 
   /*
@@ -40,6 +42,16 @@ export function ListCalendar() {
       }
     })
   })
+
+  useEffect(() => {
+    db.client.collection('calendar_events').subscribe('*', () => {
+      qc.invalidateQueries({ queryKey: [ 'events', 'all', kitchen ] })
+    })
+
+    return () => {
+      db.client.collection('calendar_events').unsubscribe('*')
+    }
+  }, [ qc, kitchen, studentId ])
 
   // Function to filter bookings (all and user-only)
   const filterBookings = useCallback((studentId: number | null) => {
