@@ -67,7 +67,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "bundled-eslint-config": "^0.5.19",
+    "bundled-eslint-config": "^0.6.3",
     "eslint": "^9.26.0",
     "jiti": "^2.4.2",
     "tailwindcss": "^4",
