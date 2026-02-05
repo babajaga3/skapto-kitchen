@@ -1,5 +1,5 @@
-import { NextRequest } from 'next/server'
-import { internalServerError, notFound, ok, unauthorized } from '@/lib/api'
+import type { NextRequest } from 'next/server'
+import { internalServerError, ok, unauthorized } from '@/lib/api'
 import { verifyUser } from '@/lib/utils'
 
 

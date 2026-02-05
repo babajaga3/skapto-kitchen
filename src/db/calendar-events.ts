@@ -1,5 +1,5 @@
+import type { CalendarEvent, CollectionEntry } from '@/types/calendar-events'
 import { db } from '@/db'
-import { CalendarEvent, CollectionEntry } from '@/types/calendar-events'
 
 
 type CreateCalendarEvent = Omit<CalendarEvent, 'id' | 'created' | 'updated'>

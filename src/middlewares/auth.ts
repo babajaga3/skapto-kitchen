@@ -1,12 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server'
+import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies'
+import { type NextRequest, NextResponse } from 'next/server'
 import { db } from '@/db'
-import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies'
 
 
 export async function auth(request: NextRequest): Promise<NextResponse> {
   const isLoggedIn = await db.isAuthenticated(request.cookies as unknown as ReadonlyRequestCookies) // todo fix types
 
-  if (request.nextUrl.pathname && request.nextUrl.pathname.startsWith('/auth')) {
+  if (
+    request.nextUrl.pathname
+      && request.nextUrl.pathname.startsWith('/auth')
+  ) {
     if (isLoggedIn) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }

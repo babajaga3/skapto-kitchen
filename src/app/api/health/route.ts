@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import type { NextResponse } from 'next/server'
 import { CalendarEvents } from '@/db/calendar-events'
 import xior from 'xior'
 import { ok, raw } from '@/lib/api'
