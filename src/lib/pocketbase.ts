@@ -1,9 +1,10 @@
 /* eslint-disable @stylistic/js/no-multi-spaces */
+import { env } from '@/env'
 import PocketBase from 'pocketbase'
 
 
 // Database instance
-export const pb = new PocketBase('https://skapto-pb.thec0derhere.me')
+export const pb = new PocketBase(env.NEXT_PUBLIC_DATABASE_URL)
 pb.autoCancellation(false) // todo temp
 
 // ------------------------------

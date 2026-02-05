@@ -1,20 +1,20 @@
+import { env } from '@/env'
+import { err, ok, type ResultAsync } from 'neverthrow'
+import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies'
 import PocketBase, {
   type AuthRecord,
   type RecordAuthResponse,
   type RecordModel
 } from 'pocketbase'
-import { type ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies'
-import { ok, err, type ResultAsync } from 'neverthrow'
 
 
-export const POCKET_BASE_URL = 'https://skapto-pb.thec0derhere.me'
 export const POCKET_AUTH_COOKIE = 'pb_auth'
 
 export class DatabaseClient {
   client: PocketBase
 
   constructor() {
-    this.client = new PocketBase(process.env.PB_DB_URL ?? POCKET_BASE_URL) // todo fix this
+    this.client = new PocketBase(env.NEXT_PUBLIC_DATABASE_URL)
   }
 
   async authenticate(

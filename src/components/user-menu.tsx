@@ -8,7 +8,7 @@ import { logout } from '@/api'
 import { useUser } from '@/hooks/use-user'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { POCKET_BASE_URL } from '@/db'
+import { env } from '@/env'
 
 
 export function UserMenu({
@@ -19,7 +19,7 @@ export function UserMenu({
   const router = useRouter()
   const queryClient = useQueryClient()
 
-  const userAvatar = `${POCKET_BASE_URL}/api/files/users/${user?.id}/${user?.avatar}`
+  const userAvatar = `${env.NEXT_PUBLIC_DATABASE_URL}/api/files/users/${user?.id}/${user?.avatar}`
 
   const { mutate } = useMutation({
     mutationKey: [ 'logout' ],
